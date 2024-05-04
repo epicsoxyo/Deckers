@@ -1,18 +1,13 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class Move : MonoBehaviour
+public struct Move
 {
-    // Start is called before the first frame update
-    void Start()
+
+    public int x;
+    public int y;
+
+    public Move(int x, int y)
     {
-        
+        this.x = x;
+        this.y = y;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }
