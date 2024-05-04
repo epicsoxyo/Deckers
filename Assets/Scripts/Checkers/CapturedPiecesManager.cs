@@ -50,12 +50,12 @@ public class CapturedPiecesManager : MonoBehaviour
         switch(capturedPiece.player)
         {
 
-            case Player.PLAYER_WHITE:
+            case Team.TEAM_WHITE:
                 if(whiteCapturedPieces >= _whiteCaptureSlots.Count) return;
                 capturedPiece.transform.SetParent(_whiteCaptureSlots[whiteCapturedPieces]);
                 whiteCapturedPieces++;
                 break;
-            case Player.PLAYER_RED:
+            case Team.TEAM_RED:
                 if(redCapturedPieces >= _redCaptureSlots.Count) return;
                 capturedPiece.transform.SetParent(_redCaptureSlots[redCapturedPieces]);
                 redCapturedPieces++;

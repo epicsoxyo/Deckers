@@ -24,14 +24,14 @@ public class CheckersGameManager : MonoBehaviour
     public Dictionary<int, GamePiece> redRemainingPieces { get; private set; }
 
     // current turn
-    private Player _currentPlayer;
+    private Team _currentPlayer;
     private GamePiece _selectedPiece;
     private Dictionary<GridSquare, GamePiece> _availableMoves = new Dictionary<GridSquare, GamePiece>(); // square, captured piece
     private bool _isCapturing = false;
 
     // events
-    public event EventHandler onWhiteBeginTurn;
-    public event EventHandler onRedBeginTurn;
+    public event EventHandler onWhiteActive;
+    public event EventHandler onRedActive;
     public event EventHandler onEndTurn;
     public event EventHandler onWhiteWin;
     public event EventHandler onRedWin;
@@ -111,22 +111,32 @@ public class CheckersGameManager : MonoBehaviour
 
 
 
-    public void BeginTurn(Player player)
+    public void BeginTurn(Team player)
     {
 
         _currentPlayer = player;
 
+        UpdateActivePieces();
+
+    }
+
+
+
+    private void UpdateActivePieces()
+    {
+
         switch(_currentPlayer)
         {
-            case Player.PLAYER_WHITE:
-                onWhiteBeginTurn?.Invoke(this, EventArgs.Empty);
+            case Team.TEAM_WHITE:
+                onWhiteActive?.Invoke(this, EventArgs.Empty);
                 return;
-            case Player.PLAYER_RED:
-                onRedBeginTurn?.Invoke(this, EventArgs.Empty);
+            case Team.TEAM_RED:
+                onRedActive?.Invoke(this, EventArgs.Empty);
                 return;
         }
 
     }
+
 
 
     public void OnPieceClicked(GamePiece gamePiece)
@@ -201,7 +211,7 @@ public class CheckersGameManager : MonoBehaviour
 
         nextSquare = null;
 
-        if(_currentPlayer == Player.PLAYER_RED) // flip direction
+        if(_currentPlayer == Team.TEAM_RED) // flip direction
         {
             deltaX *= -1;
             deltaY *= -1;
@@ -210,7 +220,6 @@ public class CheckersGameManager : MonoBehaviour
         int nextX = currentSquare.x + deltaX;
         int nextY = currentSquare.y + deltaY;
 
-        Debug.Log("NextX: " + nextX + "\nNextY: " + nextY);
         if(!grid.ContainsKey((nextX, nextY))) return false;
 
         nextSquare = grid[(nextX, nextY)];
@@ -230,8 +239,8 @@ public class CheckersGameManager : MonoBehaviour
 
         // promotion
 
-        if((_currentPlayer == Player.PLAYER_WHITE && destination.y == 8)
-        || (_currentPlayer == Player.PLAYER_RED && destination.y == 1))
+        if((_currentPlayer == Team.TEAM_WHITE && destination.y == 8)
+        || (_currentPlayer == Team.TEAM_RED && destination.y == 1))
         {
             _selectedPiece.Promote();
         }
@@ -250,10 +259,10 @@ public class CheckersGameManager : MonoBehaviour
 
         switch(_currentPlayer)
         {
-            case Player.PLAYER_WHITE:
+            case Team.TEAM_WHITE:
                 redRemainingPieces.Remove(capturedPiece.id);
                 break;
-            case Player.PLAYER_RED:
+            case Team.TEAM_RED:
                 whiteRemainingPieces.Remove(capturedPiece.id);
                 break;
         }
@@ -261,7 +270,7 @@ public class CheckersGameManager : MonoBehaviour
         capturedPiece.Capture();
         capturedPiece = null;
 
-        foreach(GamePiece piece in (_currentPlayer == Player.PLAYER_WHITE) ? whiteRemainingPieces.Values : redRemainingPieces.Values)
+        foreach(GamePiece piece in (_currentPlayer == Team.TEAM_WHITE) ? whiteRemainingPieces.Values : redRemainingPieces.Values)
         {
             piece.SetActive(piece == _selectedPiece);
         }

@@ -102,7 +102,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7656063718071025239, guid: 09ae86f72ff9a6448af3e1ef9c18bd9f, type: 3}
       propertyPath: m_Name
-      value: GamePiece (1) Variant
+      value: WhitePiece
+      objectReference: {fileID: 0}
+    - target: {fileID: 8413524074588876184, guid: 09ae86f72ff9a6448af3e1ef9c18bd9f, type: 3}
+      propertyPath: player
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

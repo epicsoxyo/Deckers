@@ -24,7 +24,7 @@ public class GamePiece : MonoBehaviour
     public int id { get; private set; }
 
     [Header("Piece Info")]
-    public Player player;
+    public Team player;
     public GamePieceType pieceType;
     public List<Move> movesSet
     {
@@ -74,8 +74,8 @@ public class GamePiece : MonoBehaviour
     private void Start()
     {
         
-        CheckersGameManager.Instance.onWhiteBeginTurn += OnWhiteBeginTurn;
-        CheckersGameManager.Instance.onRedBeginTurn += OnRedBeginTurn;
+        CheckersGameManager.Instance.onWhiteActive += OnWhiteBeginTurn;
+        CheckersGameManager.Instance.onRedActive += OnRedBeginTurn;
 
     }
 
@@ -84,7 +84,7 @@ public class GamePiece : MonoBehaviour
     private void OnWhiteBeginTurn(object sender, EventArgs e)
     {
         if(_isCaptured) return;
-        _gamePieceButton.interactable = (player == Player.PLAYER_WHITE);
+        _gamePieceButton.interactable = (player == Team.TEAM_WHITE);
     }
 
 
@@ -92,7 +92,7 @@ public class GamePiece : MonoBehaviour
     private void OnRedBeginTurn(object sender, EventArgs e)
     {
         if(_isCaptured) return;
-        _gamePieceButton.interactable = (player == Player.PLAYER_RED);
+        _gamePieceButton.interactable = (player == Team.TEAM_RED);
     }
 
 
