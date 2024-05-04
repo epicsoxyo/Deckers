@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Unity.VisualScripting;
+
 using UnityEngine;
-using UnityEngine.UI;
 
 
 
@@ -21,12 +19,8 @@ public class CheckersGameManager : MonoBehaviour
     [SerializeField] private GameObject _whitePiecePrefab;
     [SerializeField] private GameObject _redPiecePrefab;
 
-    [Header("Remaining Game Pieces")]
-    [SerializeField] private Transform whiteCapturedZone;
-    public int whiteCapturedPieces = 0;
+    // remaining game pieces
     public Dictionary<int, GamePiece> whiteRemainingPieces { get; private set; }
-    [SerializeField] private Transform redCapturedZone;
-    public int redCapturedPieces = 0;
     public Dictionary<int, GamePiece> redRemainingPieces { get; private set; }
 
     // current turn
@@ -257,14 +251,10 @@ public class CheckersGameManager : MonoBehaviour
         switch(_currentPlayer)
         {
             case Player.PLAYER_WHITE:
-                redCapturedPieces++;
                 redRemainingPieces.Remove(capturedPiece.id);
-                capturedPiece.transform.SetParent(redCapturedZone);
                 break;
             case Player.PLAYER_RED:
-                whiteCapturedPieces++;
                 whiteRemainingPieces.Remove(capturedPiece.id);
-                capturedPiece.transform.SetParent(whiteCapturedZone);
                 break;
         }
 

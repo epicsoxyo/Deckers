@@ -120,7 +120,7 @@ public class GamePiece : MonoBehaviour
 
 
 
-    public void Capture(bool revert = false)
+    public void Capture(bool revert = false, GridSquare gridSquare = null)
     {
 
         GetComponent<AspectRatioFitter>().enabled = revert;
@@ -129,6 +129,16 @@ public class GamePiece : MonoBehaviour
         _gamePieceButton.enabled = !revert;
 
         _isCaptured = !revert;
+
+        if(revert)
+        {
+            if(gridSquare == null || gridSquare.transform.childCount > 0) return;
+
+            transform.SetParent(gridSquare.transform);
+            return;
+        }
+
+        CapturedPiecesManager.Instance.CapturePiece(this);
 
     }
 
