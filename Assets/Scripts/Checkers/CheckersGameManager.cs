@@ -11,7 +11,7 @@ public class CheckersGameManager : MonoBehaviour
     public static CheckersGameManager Instance { get; private set; }
 
     [Header("Board Generation")]
-    [SerializeField] private Transform _playableArea;
+    public Transform playableArea;
     [SerializeField] private GameObject _gridSquarePrefab;
     public Dictionary<(int, int), GridSquare> grid { get; private set; }
 
@@ -20,8 +20,7 @@ public class CheckersGameManager : MonoBehaviour
     [SerializeField] private GameObject _redPiecePrefab;
 
     // remaining game pieces
-    public Dictionary<int, GamePiece> whiteRemainingPieces { get; private set; }
-    public Dictionary<int, GamePiece> redRemainingPieces { get; private set; }
+    public Dictionary<int, GamePiece> gamePieces { get; private set; }
 
     // current turn
     private Team _currentPlayer;
@@ -33,8 +32,6 @@ public class CheckersGameManager : MonoBehaviour
     public event EventHandler onWhiteActive;
     public event EventHandler onRedActive;
     public event EventHandler onEndTurn;
-    public event EventHandler onWhiteWin;
-    public event EventHandler onRedWin;
 
 
 
@@ -51,8 +48,7 @@ public class CheckersGameManager : MonoBehaviour
 
         grid = new Dictionary<(int, int), GridSquare>();
 
-        whiteRemainingPieces = new Dictionary<int, GamePiece>();
-        redRemainingPieces = new Dictionary<int, GamePiece>();
+        gamePieces = new Dictionary<int, GamePiece>();
 
         GenerateBoard();
         InitialiseGamePieces();
@@ -74,7 +70,7 @@ public class CheckersGameManager : MonoBehaviour
                 gridSquare.y = y;
 
                 RectTransform gridSquareTransform = gridSquare.transform as RectTransform;
-                gridSquareTransform.SetParent(_playableArea);
+                gridSquareTransform.SetParent(playableArea);
             }
         }
 
@@ -88,7 +84,7 @@ public class CheckersGameManager : MonoBehaviour
         for(int i = 0; i < 12; i++)
         {
             GamePiece gamePiece = Instantiate(_whitePiecePrefab).GetComponent<GamePiece>();
-            whiteRemainingPieces[gamePiece.id] = gamePiece;
+            gamePieces[gamePiece.id] = gamePiece;
 
             int x = (2 * i) % 8 - ((i > 3) && (i < 8) ? 1 : 0) + 2;
             int y = i / 4 + 1;
@@ -99,7 +95,7 @@ public class CheckersGameManager : MonoBehaviour
         for(int i = 0; i < 12; i++)
         {
             GamePiece gamePiece = Instantiate(_redPiecePrefab).GetComponent<GamePiece>();
-            redRemainingPieces[gamePiece.id] = gamePiece;
+            gamePieces[gamePiece.id] = gamePiece;
 
             int x = (i * 2) % 8 - (!((i > 3) && (i < 8)) ? 1 : 0) + 2;
             int y = (i / 4) + 6;
@@ -153,7 +149,13 @@ public class CheckersGameManager : MonoBehaviour
         ClearCurrentSelection();
 
         _selectedPiece = gamePiece;
-        GridSquare currentSquare = _selectedPiece.transform.parent.GetComponent<GridSquare>();
+
+        Transform selectedPieceParent = _selectedPiece.transform.parent;
+        if(selectedPieceParent == null
+        || !selectedPieceParent.TryGetComponent(out GridSquare currentSquare))
+        {
+            return;
+        }
 
         foreach(Move move in _selectedPiece.movesSet)
         {
@@ -182,7 +184,7 @@ public class CheckersGameManager : MonoBehaviour
             }
         }
 
-        if(_isCapturing && _availableMoves.Count == 0) EndTurn();
+        if(_isCapturing && _availableMoves.Count == 0) TriggerEndTurn();
 
     }
 
@@ -232,45 +234,103 @@ public class CheckersGameManager : MonoBehaviour
     public void MoveSelectedPiece(GridSquare destination)
     {
 
-        // move the piece
+        bool isOnline = DeckersNetworkManager.isOnline;
+        OnlineGameManager online = OnlineGameManager.Instance;
 
-        _selectedPiece.transform.SetParent(destination.transform);
-
+        if(isOnline)
+        {
+            online.MovePiece(_selectedPiece.id, destination.x, destination.y);
+        }
+        else
+        {
+            MovePiece(_selectedPiece.id, destination.x, destination.y);
+        }
 
         // promotion
 
         if((_currentPlayer == Team.TEAM_WHITE && destination.y == 8)
         || (_currentPlayer == Team.TEAM_RED && destination.y == 1))
         {
-            _selectedPiece.Promote();
+            if(isOnline)
+            {
+                online.PromotePiece(_selectedPiece.id);
+            }
+            else
+            {
+                PromotePiece(_selectedPiece.id);
+            }
         }
-
 
         // capture
 
         GamePiece capturedPiece = _availableMoves[destination];
         if(capturedPiece == null)
         {
-            EndTurn();
+            TriggerEndTurn();
             return;
         }
 
-        _isCapturing = true;
-
-        switch(_currentPlayer)
+        if(isOnline)
         {
-            case Team.TEAM_WHITE:
-                redRemainingPieces.Remove(capturedPiece.id);
-                break;
-            case Team.TEAM_RED:
-                whiteRemainingPieces.Remove(capturedPiece.id);
-                break;
+            online.CapturePiece(capturedPiece.id);
+        }
+        else
+        {
+            CapturePiece(capturedPiece.id);
+
+            foreach(GamePiece piece in gamePieces.Values)
+            {
+                piece.SetActive(piece == _selectedPiece);
+            }
+
+            DisplayAvailableMoves(_selectedPiece);
         }
 
-        capturedPiece.Capture();
-        capturedPiece = null;
+    }
 
-        foreach(GamePiece piece in (_currentPlayer == Team.TEAM_WHITE) ? whiteRemainingPieces.Values : redRemainingPieces.Values)
+    private GamePiece FindPiece(int pieceId)
+    {
+
+        GamePiece foundPiece = null;
+
+        if(gamePieces.ContainsKey(pieceId)) foundPiece = gamePieces[pieceId];
+
+        if(foundPiece == null)
+        {
+            Debug.LogError("Could not find piece with id" + pieceId);
+        }
+
+        return foundPiece;
+
+    }
+
+    public void MovePiece(int pieceId, int destinationX, int destinationY)
+    {
+        GamePiece pieceToMove = FindPiece(pieceId);
+        GridSquare destination = grid[(destinationX, destinationY)];
+        pieceToMove.transform.SetParent(destination.transform);
+    }
+
+    public void PromotePiece(int pieceId)
+    {
+        GamePiece pieceToPromote = FindPiece(pieceId);
+        pieceToPromote.Promote();
+    }
+
+    public void CapturePiece(int pieceId)
+    {
+
+        GamePiece capturedPiece = FindPiece(pieceId);
+
+        _isCapturing = true;
+
+        gamePieces.Remove(capturedPiece.id);
+
+        capturedPiece.Capture();
+
+        if(_currentPlayer != OnlineGameManager.Instance.localTeam) return;
+
+        foreach(GamePiece piece in gamePieces.Values)
         {
             piece.SetActive(piece == _selectedPiece);
         }
@@ -281,21 +341,23 @@ public class CheckersGameManager : MonoBehaviour
 
 
 
+    public void TriggerEndTurn()
+    {
+
+        if(DeckersNetworkManager.isOnline)
+        {
+            OnlineGameManager.Instance.CheckersEndTurn();
+            return;
+        }
+
+        EndTurn();
+
+    }
+
     public void EndTurn()
     {
 
         ClearCurrentSelection();
-
-        if(whiteRemainingPieces.Count == 0)
-        {
-            onRedWin?.Invoke(this, EventArgs.Empty);
-            return;
-        }
-        if(redRemainingPieces.Count == 0)
-        {
-            onWhiteWin?.Invoke(this, EventArgs.Empty);
-            return;
-        }
 
         _isCapturing = false;
 

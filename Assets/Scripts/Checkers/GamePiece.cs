@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-
+using Unity.Services.Lobbies.Models;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -57,8 +57,7 @@ public class GamePiece : MonoBehaviour
     private void Awake()
     {
 
-        id = _currentId;
-        _currentId++;
+        id = _currentId++;
 
         _gamePieceButton = GetComponent<Button>();
         _gamePieceButton.onClick.AddListener(OnPieceClicked);
@@ -107,6 +106,13 @@ public class GamePiece : MonoBehaviour
     private void OnPieceClicked()
     {
         if(_isCaptured) return;
+
+        if(DeckersNetworkManager.isOnline
+        && OnlineGameManager.Instance.localTeam != player)
+        {
+            return;
+        }
+
         CheckersGameManager.Instance.OnPieceClicked(this);
     }
 

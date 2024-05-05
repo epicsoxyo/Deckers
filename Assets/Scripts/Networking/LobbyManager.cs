@@ -22,6 +22,7 @@ public class LobbyManager : MonoBehaviour
         get { return Instance.currentLobby.HostId == SignInManager.Instance.localId; }
     }
 
+    private ILobbyEvents lobbyEvents;
     public event EventHandler onLobbyChanged;
 
 
@@ -109,6 +110,8 @@ public class LobbyManager : MonoBehaviour
 
         Debug.Log("Created Lobby: " + currentLobby.LobbyCode);
 
+        OnlineGameManager.Instance.localTeam = Team.TEAM_WHITE;
+
         DeckersNetworkManager.Instance.StartHost();
 
         return true;
@@ -152,6 +155,8 @@ public class LobbyManager : MonoBehaviour
 
         Debug.Log("Joined Lobby: " + currentLobby.LobbyCode);
 
+        OnlineGameManager.Instance.localTeam = Team.TEAM_RED;
+
         DeckersNetworkManager.Instance.StartClient();
 
         return true;
@@ -174,7 +179,9 @@ public class LobbyManager : MonoBehaviour
             string playerId = SignInManager.Instance.localId;
             string lobbyId = currentLobby.Id;
 
-            if(currentLobby.Players.Count == 1)
+            await lobbyEvents.UnsubscribeAsync();
+
+            if(currentLobby.Players.Count <= 1)
             {
                 await deleteLobby(lobbyId);
             }
@@ -234,7 +241,7 @@ public class LobbyManager : MonoBehaviour
 
         try
         {
-            await Lobbies.Instance.SubscribeToLobbyEventsAsync(currentLobby.Id, callbacks);
+            lobbyEvents = await Lobbies.Instance.SubscribeToLobbyEventsAsync(currentLobby.Id, callbacks);
             return true;
         }
         catch (LobbyServiceException ex)
@@ -263,8 +270,12 @@ public class LobbyManager : MonoBehaviour
 
     private void OnLobbyChanged(ILobbyChanges changes)
     {
+
+        if(changes == null) return;
+
         changes.ApplyToLobby(currentLobby);
         onLobbyChanged.Invoke(this, EventArgs.Empty);
+
     }
 
 

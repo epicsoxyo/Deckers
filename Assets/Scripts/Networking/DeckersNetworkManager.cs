@@ -12,6 +12,11 @@ public class DeckersNetworkManager : NetworkManager
         get { return Singleton; }
     }
 
+    public static bool isOnline
+    {
+        get { return Singleton.IsServer || Singleton.IsClient; }
+    }
+
 
 
     private void Start()
@@ -35,8 +40,15 @@ public class DeckersNetworkManager : NetworkManager
 
     private void UpdateIsHost()
     {
-        if(LobbyManager.Instance.isLobbyHost) StartHost();
-        else StartClient();
+        if(LobbyManager.Instance.isLobbyHost)
+        {
+            StartHost();
+            OnlineGameManager.Instance.localTeam = Team.TEAM_WHITE;
+            return;
+        }
+        
+        StartClient();
+        OnlineGameManager.Instance.localTeam = Team.TEAM_RED;
     }
 
 }

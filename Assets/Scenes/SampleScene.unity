@@ -642,7 +642,7 @@ GameObject:
   - component: {fileID: 265868764}
   - component: {fileID: 265868763}
   m_Layer: 5
-  m_Name: WhiteCapturedPieces
+  m_Name: UpperCaptureSlots
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1325,7 +1325,7 @@ GameObject:
   - component: {fileID: 425288619}
   - component: {fileID: 425288618}
   m_Layer: 5
-  m_Name: RedCapturedPieces
+  m_Name: LowerCaptureSlots
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3701,7 +3701,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b14419cd33793a54a83a54acce6ef6ee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isOnline: 0
   mainMenuScreen: {fileID: 705621305}
   whiteWinScreen: {fileID: 1388035698}
   redWinScreen: {fileID: 50242261}
@@ -3717,7 +3716,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23d596a48ba01a242a414cabe381260c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _playableArea: {fileID: 1193619136}
+  playableArea: {fileID: 1193619136}
   _gridSquarePrefab: {fileID: 8175684183093011493, guid: 46fe48410fd6a7b4ea2a2b4de26c5def, type: 3}
   _whitePiecePrefab: {fileID: 255753725916824532, guid: f25d61589849df24f9ec46db24c1725d, type: 3}
   _redPiecePrefab: {fileID: 5203529899651846257, guid: 492af15a04551374ead776e5eaeb0be3, type: 3}
@@ -3733,8 +3732,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 42497eddccabfc8428c5e7ef173d6cba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  whiteCapturedPiecesTransform: {fileID: 265868762}
-  redCapturedPiecesTransform: {fileID: 425288617}
+  upperCaptureDial: {fileID: 265868762}
+  lowerCaptureDial: {fileID: 425288617}
+  flipDials: 0
 --- !u!114 &964772550
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3779,6 +3779,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 103d434e8e6bd5a4abaa0a85346489ec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  localTeam: 0
 --- !u!1 &986995190
 GameObject:
   m_ObjectHideFlags: 0

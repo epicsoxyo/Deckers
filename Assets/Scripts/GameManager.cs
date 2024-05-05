@@ -34,7 +34,6 @@ public class LocalGameManager : MonoBehaviour
 {
 
     public static LocalGameManager Instance { get; private set;}
-    public bool isOnline = false;
 
     private int _currentTurn = 1;
     private GameState _currentGameState = GameState.STATE_WAITING_FOR_PLAYERS;
@@ -67,8 +66,9 @@ public class LocalGameManager : MonoBehaviour
     {
 
         CheckersGameManager.Instance.onEndTurn += OnAction;
-        CheckersGameManager.Instance.onWhiteWin += OnWhiteWin;
-        CheckersGameManager.Instance.onRedWin += OnRedWin;
+
+        CapturedPiecesManager.Instance.onWhiteWin += OnWhiteWin;
+        CapturedPiecesManager.Instance.onRedWin += OnRedWin;
 
         whiteWinScreen.SetActive(false);
         redWinScreen.SetActive(false);
@@ -80,12 +80,10 @@ public class LocalGameManager : MonoBehaviour
 
 
 
-    public void StartGame(bool isOnlineGame)
+    public void TriggerStartGame()
     {
 
-        isOnline = isOnlineGame;
-
-        if(isOnline)
+        if(DeckersNetworkManager.isOnline)
         {
             if(LobbyManager.Instance.currentLobby.Players.Count != 2) return;
             OnlineGameManager.Instance.StartGame();
@@ -123,6 +121,7 @@ public class LocalGameManager : MonoBehaviour
     private void OnWhiteWin(object sender, EventArgs e)
     {
         _currentGameState = GameState.STATE_END_OF_GAME;
+        whiteWinScreen.SetActive(true);
     }
 
     private void OnRedWin(object sender, EventArgs e)

@@ -47,7 +47,7 @@ public class MainMenu : Menu
 
         createLobbyButton.onClick.AddListener(async () => await CreateLobby());
         joinLobbyButton.onClick.AddListener(async () => await JoinLobby());
-        localPlayButton.onClick.AddListener(() => LocalGameManager.Instance.StartGame(false));
+        localPlayButton.onClick.AddListener(() => LocalGameManager.Instance.TriggerStartGame());
 
     }
 
@@ -70,7 +70,6 @@ public class MainMenu : Menu
         OpenPanel(MenuPanel.LOBBY);
         lobbyMenu.SetLobbyInfoUI(LobbyManager.Instance.currentLobby);
         lobbyMenu.UpdateLobbyInfoUI();
-
 
     }
 

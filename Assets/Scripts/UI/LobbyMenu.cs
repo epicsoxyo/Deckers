@@ -5,10 +5,8 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 using Unity.Services.Lobbies.Models;
-using Unity.Services.Authentication;
 
 using TMPro;
-using Unity.Netcode;
 
 
 
@@ -45,7 +43,7 @@ public class LobbyMenu : Menu
 
         leaveLobbyButton.onClick.AddListener(async () => await LeaveLobby());
 
-        startButton.onClick.AddListener(() => LocalGameManager.Instance.StartGame(true));
+        startButton.onClick.AddListener(() => LocalGameManager.Instance.TriggerStartGame());
 
     }
 

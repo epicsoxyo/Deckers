@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 using UnityEngine;
@@ -9,14 +10,25 @@ public class CapturedPiecesManager : MonoBehaviour
 
     public static CapturedPiecesManager Instance { get; private set; }
 
-    [SerializeField] private Transform whiteCapturedPiecesTransform;
-    [SerializeField] private Transform redCapturedPiecesTransform;
+    [SerializeField] private Transform upperCaptureDial;
+    [SerializeField] private Transform lowerCaptureDial;
+    public bool flipDials
+    {
+        get
+        {
+            return DeckersNetworkManager.isOnline
+                && OnlineGameManager.Instance.localTeam == Team.TEAM_WHITE;
+        }
+    }
 
-    private List<Transform> _whiteCaptureSlots = new List<Transform>();
-    private List<Transform> _redCaptureSlots = new List<Transform>();
+    private List<Transform> _upperCaptureSlots = new List<Transform>();
+    private List<Transform> _lowerCaptureSlots = new List<Transform>();
 
     public int whiteCapturedPieces { get; private set; }
     public int redCapturedPieces  { get; private set; }
+
+    public event EventHandler onWhiteWin;
+    public event EventHandler onRedWin;
 
 
 
@@ -31,13 +43,13 @@ public class CapturedPiecesManager : MonoBehaviour
 
         Instance = this;
 
-        foreach(Transform t in whiteCapturedPiecesTransform)
+        foreach(Transform t in upperCaptureDial)
         {
-            _whiteCaptureSlots.Add(t);
+            _upperCaptureSlots.Add(t);
         }
-        foreach(Transform t in redCapturedPiecesTransform)
+        foreach(Transform t in lowerCaptureDial)
         {
-            _redCaptureSlots.Add(t);
+            _lowerCaptureSlots.Add(t);
         }
 
     }
@@ -47,23 +59,64 @@ public class CapturedPiecesManager : MonoBehaviour
     public void CapturePiece(GamePiece capturedPiece)
     {
 
+        List<Transform> captureSlots;
+
         switch(capturedPiece.player)
         {
-
             case Team.TEAM_WHITE:
-                if(whiteCapturedPieces >= _whiteCaptureSlots.Count) return;
-                capturedPiece.transform.SetParent(_whiteCaptureSlots[whiteCapturedPieces]);
+                captureSlots = flipDials ? _upperCaptureSlots : _lowerCaptureSlots;
+                Debug.Log($"White captured pieces: {whiteCapturedPieces}; Capture slots: {captureSlots.Count}");
+
+                capturedPiece.transform.SetParent(captureSlots[whiteCapturedPieces]);
                 whiteCapturedPieces++;
+
+                if(whiteCapturedPieces >= captureSlots.Count)
+                {
+                    Debug.Log("Sufficient captures for a win.");
+                    TriggerWin(Team.TEAM_RED);
+                    return;
+                }
+
                 break;
+
             case Team.TEAM_RED:
-                if(redCapturedPieces >= _redCaptureSlots.Count) return;
-                capturedPiece.transform.SetParent(_redCaptureSlots[redCapturedPieces]);
+                captureSlots = flipDials ? _lowerCaptureSlots : _upperCaptureSlots;
+                Debug.Log($"Red captured pieces: {redCapturedPieces}; Capture slots: {captureSlots.Count}");
+
+                capturedPiece.transform.SetParent(captureSlots[redCapturedPieces]);
                 redCapturedPieces++;
+
+                if(redCapturedPieces >= captureSlots.Count)
+                {
+                    Debug.Log("Sufficient captures for a win.");
+                    TriggerWin(Team.TEAM_WHITE);
+                    return;
+                }
+
                 break;
 
         }
 
-
     }
+
+
+
+    private void TriggerWin(Team winningTeam)
+    {
+
+        Debug.Log($"Triggering win for {winningTeam}.");
+        switch(winningTeam)
+        {
+            case Team.TEAM_WHITE:
+                Debug.Log("Invoking onWhiteWin");
+                onWhiteWin?.Invoke(this, EventArgs.Empty);
+                return;
+            case Team.TEAM_RED:
+                Debug.Log("Invoking onRedWin");
+                onRedWin?.Invoke(this, EventArgs.Empty);
+                return;
+        }
+    }
+
 
 }

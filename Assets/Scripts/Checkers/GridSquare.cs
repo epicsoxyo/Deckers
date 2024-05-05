@@ -11,6 +11,9 @@ public class GridSquare : MonoBehaviour
 
     // TODO: implement gridsquare properties (e.g. is burning)
 
+    private static int _currentId = 0;
+    public int id { get; private set; }
+
     public int x;
     public int y;
 
@@ -21,6 +24,8 @@ public class GridSquare : MonoBehaviour
 
     private void Awake()
     {
+
+        id = _currentId++;
 
         _glow = GetComponent<Image>();
         _glow.enabled = false;
