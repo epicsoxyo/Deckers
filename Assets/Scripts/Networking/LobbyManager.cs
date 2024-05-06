@@ -19,11 +19,12 @@ public class LobbyManager : MonoBehaviour
     public Lobby currentLobby { get; private set; }
     public bool isLobbyHost
     {
-        get { return Instance.currentLobby.HostId == SignInManager.Instance.localId; }
+        get { return currentLobby.HostId == SignInManager.Instance.localId; }
     }
 
     private ILobbyEvents lobbyEvents;
     public event EventHandler onLobbyChanged;
+    public EventHandler onGameStart;
 
 
 
@@ -93,10 +94,14 @@ public class LobbyManager : MonoBehaviour
                 id: SignInManager.Instance.localId,
                 data: new Dictionary<string, PlayerDataObject>()
                 {
-                    { "PlayerName", new PlayerDataObject( visibility: PlayerDataObject.VisibilityOptions.Member, playerName) },
-                    { "Team", new PlayerDataObject( visibility: PlayerDataObject.VisibilityOptions.Member, Team.TEAM_WHITE.ToString()) },
+                    { "PlayerName", new PlayerDataObject( visibility: PlayerDataObject.VisibilityOptions.Member, playerName ) },
+                    { "Team", new PlayerDataObject( visibility: PlayerDataObject.VisibilityOptions.Member, Team.TEAM_WHITE.ToString() ) },
                 }
             );
+            options.Data = new Dictionary<string, DataObject>
+            {
+                { "RelayCode", new DataObject( visibility: DataObject.VisibilityOptions.Member, "0" ) },
+            };
 
             currentLobby = await LobbyService.Instance.CreateLobbyAsync(lobbyName, maxPlayers, options);
 
@@ -109,10 +114,6 @@ public class LobbyManager : MonoBehaviour
         }
 
         Debug.Log("Created Lobby: " + currentLobby.LobbyCode);
-
-        OnlineGameManager.Instance.localTeam = Team.TEAM_WHITE;
-
-        DeckersNetworkManager.Instance.StartHost();
 
         return true;
 
@@ -146,20 +147,15 @@ public class LobbyManager : MonoBehaviour
 
             StartCoroutine(lobbyHeartbeatCoroutine(currentLobby.Id, 15f));
 
+            Debug.Log("Joined Lobby: " + currentLobby.LobbyCode);
+            return true;
         }
         catch(Exception ex)
         {
             Debug.LogError("Could not join lobby due to exception: " + ex);
-            return false;
         }
 
-        Debug.Log("Joined Lobby: " + currentLobby.LobbyCode);
-
-        OnlineGameManager.Instance.localTeam = Team.TEAM_RED;
-
-        DeckersNetworkManager.Instance.StartClient();
-
-        return true;
+        return false;
 
     }
 
@@ -268,13 +264,25 @@ public class LobbyManager : MonoBehaviour
 
 
 
-    private void OnLobbyChanged(ILobbyChanges changes)
+    private async void OnLobbyChanged(ILobbyChanges changes)
     {
 
         if(changes == null) return;
 
         changes.ApplyToLobby(currentLobby);
         onLobbyChanged.Invoke(this, EventArgs.Empty);
+
+
+        Debug.Log(currentLobby.Name);
+        Debug.Log(currentLobby.Data["RelayCode"].Value);
+
+        if(isLobbyHost) return;
+
+        if(currentLobby.Data["RelayCode"].Value != "0")
+        {
+            onGameStart?.Invoke(this, EventArgs.Empty);
+            await RelayManager.Instance.JoinRelay(currentLobby.Data["RelayCode"].Value);
+        }
 
     }
 
@@ -338,6 +346,36 @@ public class LobbyManager : MonoBehaviour
         }
 
         return list;
+
+    }
+
+
+
+    public async void StartGame()
+    {
+
+        if(currentLobby.Players.Count != 2) return;
+
+        try
+        {
+            string relayCode = await RelayManager.Instance.CreateRelay();
+
+            UpdateLobbyOptions options = new UpdateLobbyOptions
+            {
+                Data = new Dictionary<string, DataObject>
+                {
+                    { "RelayCode", new DataObject(DataObject.VisibilityOptions.Member, relayCode) },
+                }
+            };
+
+            Lobby lobby = await Lobbies.Instance.UpdateLobbyAsync(currentLobby.Id, options);
+
+            onGameStart?.Invoke(this, EventArgs.Empty);
+        }
+        catch (LobbyServiceException ex)
+        {
+            Debug.Log(ex);
+        }
 
     }
 

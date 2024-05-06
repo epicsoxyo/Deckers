@@ -16,7 +16,7 @@ public enum MenuPanel
 
 
 // main menu UI script
-public class MainMenu : Menu
+public class MainMenu : MonoBehaviour
 {
 
     public static MainMenu Instance;
@@ -47,7 +47,7 @@ public class MainMenu : Menu
 
         createLobbyButton.onClick.AddListener(async () => await CreateLobby());
         joinLobbyButton.onClick.AddListener(async () => await JoinLobby());
-        localPlayButton.onClick.AddListener(() => LocalGameManager.Instance.TriggerStartGame());
+        localPlayButton.onClick.AddListener(() => LocalGameManager.Instance.StartGame());
 
     }
 
@@ -56,7 +56,7 @@ public class MainMenu : Menu
     private async Task CreateLobby()
     {
 
-        string playerName = "Person A"; // hostPlayerName.text;
+        string playerName = "Player"; // hostPlayerName.text;
 
         bool lobbyCreated = await LobbyManager.Instance.CreateLobby(playerName);
         if (!lobbyCreated)
@@ -81,7 +81,7 @@ public class MainMenu : Menu
         if(lobbyCode == null) return;
         // string playerName = playerNameField.text;
 
-        bool lobbyCreated = await LobbyManager.Instance.JoinLobby(lobbyCode, "Person B");
+        bool lobbyCreated = await LobbyManager.Instance.JoinLobby(lobbyCode, "Player");
 
         if (!lobbyCreated)
         {

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 
 using UnityEngine;
+using UnityEngine.UI;
 
 
 
@@ -18,6 +19,9 @@ public class CheckersGameManager : MonoBehaviour
     [Header("Game Piece Generation")]
     [SerializeField] private GameObject _whitePiecePrefab;
     [SerializeField] private GameObject _redPiecePrefab;
+
+    [Header("Skip Turn")]
+    [SerializeField] private Button _skipTurnButton;
 
     // remaining game pieces
     public Dictionary<int, GamePiece> gamePieces { get; private set; }
@@ -49,6 +53,8 @@ public class CheckersGameManager : MonoBehaviour
         grid = new Dictionary<(int, int), GridSquare>();
 
         gamePieces = new Dictionary<int, GamePiece>();
+
+        _skipTurnButton.onClick.AddListener(TriggerEndTurn);
 
         GenerateBoard();
         InitialiseGamePieces();
@@ -113,6 +119,15 @@ public class CheckersGameManager : MonoBehaviour
         _currentPlayer = player;
 
         UpdateActivePieces();
+
+        if(!DeckersNetworkManager.isOnline
+        || player == OnlineGameManager.Instance.localTeam)
+        {
+            ScreenManager.Instance.SwitchToScreen(UIScreen.SCREEN_CHECKERS);
+            return;
+        }
+
+        ScreenManager.Instance.SwitchToScreen(UIScreen.SCREEN_EMPTY);
 
     }
 
@@ -239,7 +254,7 @@ public class CheckersGameManager : MonoBehaviour
 
         if(isOnline)
         {
-            online.MovePiece(_selectedPiece.id, destination.x, destination.y);
+            online.Checkers_MovePiece(_selectedPiece.id, destination.x, destination.y);
         }
         else
         {
@@ -253,7 +268,7 @@ public class CheckersGameManager : MonoBehaviour
         {
             if(isOnline)
             {
-                online.PromotePiece(_selectedPiece.id);
+                online.Checkers_PromotePiece(_selectedPiece.id);
             }
             else
             {
@@ -272,19 +287,18 @@ public class CheckersGameManager : MonoBehaviour
 
         if(isOnline)
         {
-            online.CapturePiece(capturedPiece.id);
+            online.Checkers_CapturePiece(capturedPiece.id);
+            return;
         }
-        else
+
+        CapturePiece(capturedPiece.id);
+
+        foreach(GamePiece piece in gamePieces.Values)
         {
-            CapturePiece(capturedPiece.id);
-
-            foreach(GamePiece piece in gamePieces.Values)
-            {
-                piece.SetActive(piece == _selectedPiece);
-            }
-
-            DisplayAvailableMoves(_selectedPiece);
+            piece.SetActive(piece == _selectedPiece);
         }
+
+        DisplayAvailableMoves(_selectedPiece);
 
     }
 
@@ -328,15 +342,6 @@ public class CheckersGameManager : MonoBehaviour
 
         capturedPiece.Capture();
 
-        if(_currentPlayer != OnlineGameManager.Instance.localTeam) return;
-
-        foreach(GamePiece piece in gamePieces.Values)
-        {
-            piece.SetActive(piece == _selectedPiece);
-        }
-
-        DisplayAvailableMoves(_selectedPiece);
-
     }
 
 
@@ -346,7 +351,7 @@ public class CheckersGameManager : MonoBehaviour
 
         if(DeckersNetworkManager.isOnline)
         {
-            OnlineGameManager.Instance.CheckersEndTurn();
+            OnlineGameManager.Instance.Checkers_EndTurn();
             return;
         }
 

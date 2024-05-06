@@ -1,8 +1,6 @@
 using System;
 
 using UnityEngine;
-using UnityEngine.SceneManagement;
-using UnityEngine.UI;
 
 
 
@@ -39,11 +37,8 @@ public class LocalGameManager : MonoBehaviour
     private GameState _currentGameState = GameState.STATE_WAITING_FOR_PLAYERS;
     private bool _waitingForAction = true;
 
-    [SerializeField] private Canvas mainMenuScreen;
-
-    [SerializeField] private GameObject whiteWinScreen;
-    [SerializeField] private GameObject redWinScreen;
-
+    public event EventHandler onWhiteWin;
+    public event EventHandler onRedWin;
 
 
 
@@ -67,36 +62,15 @@ public class LocalGameManager : MonoBehaviour
 
         CheckersGameManager.Instance.onEndTurn += OnAction;
 
-        CapturedPiecesManager.Instance.onWhiteWin += OnWhiteWin;
-        CapturedPiecesManager.Instance.onRedWin += OnRedWin;
+        DeckersGameManager.Instance.onEndTurn += OnAction;
 
-        whiteWinScreen.SetActive(false);
-        redWinScreen.SetActive(false);
-
-        // whiteWinScreen.GetComponentInChildren<Button>().onClick.AddListener(Rematch);
-        // redWinScreen.GetComponentInChildren<Button>().onClick.AddListener(Rematch);
-
-    }
-
-
-
-    public void TriggerStartGame()
-    {
-
-        if(DeckersNetworkManager.isOnline)
-        {
-            if(LobbyManager.Instance.currentLobby.Players.Count != 2) return;
-            OnlineGameManager.Instance.StartGame();
-            return;
-        }
-
-        StartGame();
+        CaptureManager.Instance.onWhiteWin += OnWhiteWin;
+        CaptureManager.Instance.onRedWin += OnRedWin;
 
     }
 
     public void StartGame()
     {
-        mainMenuScreen.enabled = false;
         _currentGameState = GameState.STATE_WHITE_CHECKERS;
         _waitingForAction = false;
     }
@@ -105,36 +79,29 @@ public class LocalGameManager : MonoBehaviour
 
     private void OnAction(object sender, EventArgs e)
     {
-
-        _currentGameState = (_currentGameState == GameState.STATE_WHITE_CHECKERS) ?
-            GameState.STATE_RED_CHECKERS : GameState.STATE_WHITE_CHECKERS;
-
         _waitingForAction = false;
-
-        // (if last action of the turn)
-        _currentTurn++;
-
     }
 
 
 
     private void OnWhiteWin(object sender, EventArgs e)
     {
+
+        // decide on what to do with the win
+
         _currentGameState = GameState.STATE_END_OF_GAME;
-        whiteWinScreen.SetActive(true);
+        onWhiteWin.Invoke(this, EventArgs.Empty);
+
     }
 
     private void OnRedWin(object sender, EventArgs e)
     {
+
+        // decide on what to do with the win
+
         _currentGameState = GameState.STATE_END_OF_GAME;
-        redWinScreen.SetActive(true);
-    }
+        onRedWin.Invoke(this, EventArgs.Empty);
 
-
-
-    private void Rematch()
-    {
-        DeckersNetworkManager.Instance.SceneManager.LoadScene(SceneManager.GetActiveScene().name, LoadSceneMode.Single);
     }
 
 
@@ -149,50 +116,58 @@ public class LocalGameManager : MonoBehaviour
         switch(_currentGameState)
         {
             case GameState.STATE_WAITING_FOR_PLAYERS:
+                _currentGameState = GameState.STATE_WHITE_CHECKERS;
                 break;
 
             case GameState.STATE_START_OF_TURN:
                 // start of turn card effects in order they were played
+                _currentGameState = GameState.STATE_WHITE_CARDS;
                 break;
 
             case GameState.STATE_WHITE_CARDS:
-                // white play a card
+                DeckersGameManager.Instance.BeginTurn(Team.TEAM_WHITE);
+                _currentGameState = GameState.STATE_RED_CARDS;
+                _waitingForAction = true;
                 break;
 
             case GameState.STATE_RED_CARDS:
-                // red play a card
+                DeckersGameManager.Instance.BeginTurn(Team.TEAM_RED);
+                _currentGameState = GameState.STATE_MIDDLE_OF_TURN;
+                _waitingForAction = true;
                 break;
 
             case GameState.STATE_MIDDLE_OF_TURN:
                 // middle of turn card effects in order they were played
+                _currentGameState = GameState.STATE_WHITE_CHECKERS;
                 break;
 
             case GameState.STATE_WHITE_CHECKERS:
-                // white play checkers
                 CheckersGameManager.Instance.BeginTurn(Team.TEAM_WHITE);
+                _currentGameState = GameState.STATE_RED_CHECKERS;
+                _waitingForAction = true;
                 break;
 
             case GameState.STATE_RED_CHECKERS:
-                // red play checkers
                 CheckersGameManager.Instance.BeginTurn(Team.TEAM_RED);
+                _currentGameState = GameState.STATE_END_OF_TURN;
+                _waitingForAction = true;
                 break;
 
             case GameState.STATE_END_OF_TURN:
-                // end of turn card effects
-                // check for a win
-                // if someone has won, do on win card effects
-                // if neither player won yet, increment turn
+                // end of turn card effects in the order they were played
+                _currentGameState = (++_currentTurn > 3) ?
+                    GameState.STATE_START_OF_TURN : 
+                    GameState.STATE_WHITE_CHECKERS;
                 break;
 
             case GameState.STATE_END_OF_GAME:
-                // ask if players want to play the game again
-                // if yes, reload scene
-                // if no, load main menu
+                // end of game card effects (e.g. donkey)
+                // determine a winner
                 break;
 
         }
 
-        _waitingForAction = true;
+        // _waitingForAction = true;
 
     }
 

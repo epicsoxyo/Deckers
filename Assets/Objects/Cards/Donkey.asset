@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1dd791c9697b18743aa35eab0dddcccf, type: 3}
+  m_Name: Donkey
+  m_EditorClassIdentifier: 
+  cardName: Donkey
+  cardDescription: While held by any player, at the start of each turn, players must
+    take turns to choose a card from their opponent's hand to transfer to their own
+    hand. At the end of the game, if the winner is holding the donkey, they lose.

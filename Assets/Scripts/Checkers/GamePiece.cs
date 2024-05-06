@@ -144,7 +144,7 @@ public class GamePiece : MonoBehaviour
             return;
         }
 
-        CapturedPiecesManager.Instance.CapturePiece(this);
+        CaptureManager.Instance.Capture(this);
 
     }
 

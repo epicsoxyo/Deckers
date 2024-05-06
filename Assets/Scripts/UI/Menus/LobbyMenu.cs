@@ -43,7 +43,7 @@ public class LobbyMenu : Menu
 
         leaveLobbyButton.onClick.AddListener(async () => await LeaveLobby());
 
-        startButton.onClick.AddListener(() => LocalGameManager.Instance.TriggerStartGame());
+        startButton.onClick.AddListener(() => LobbyManager.Instance.StartGame());
 
     }
 

@@ -1,14 +1,24 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using Unity.Netcode;
+
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+
+
 
 public class OnlineGameManager : NetworkBehaviour
 {
 
     public static OnlineGameManager Instance { get; private set; }
-    public Team localTeam;
+
+    public Team localTeam
+    {
+        get
+        {
+            return (DeckersNetworkManager.Instance.IsHost) ? Team.TEAM_WHITE : Team.TEAM_RED;
+        }
+    }
 
 
 
@@ -27,87 +37,85 @@ public class OnlineGameManager : NetworkBehaviour
 
 
 
+    private void Start()
+    {
+        LobbyManager.Instance.onGameStart += StartGame;
+    }
+
+
+
     // GAME MANAGER RPCs
 
-    public void StartGame()
+    private void StartGame(object sender, EventArgs e)
     {
-        StartGameServerRpc();
-    }
 
-    [ServerRpc(RequireOwnership = false)]
-    private void StartGameServerRpc()
-    {
-        StartGameClientRpc();
-    }
-
-    [ClientRpc]
-    private void StartGameClientRpc()
-    {
-        if(localTeam != Team.TEAM_WHITE)
+        if(localTeam == Team.TEAM_RED)
         {
             Transform playableArea = CheckersGameManager.Instance.playableArea;
             playableArea.GetComponent<GridLayoutGroup>().startCorner = GridLayoutGroup.Corner.LowerRight;
         }
+
         LocalGameManager.Instance.StartGame();
+
     }
 
 
 
     // CHECKERS MANAGER RPCs
 
-    public void MovePiece(int pieceId, int x, int y)
+    public void Checkers_MovePiece(int pieceId, int x, int y)
     {
-        MovePieceServerRpc(pieceId, x, y);
+        Checkers_MovePieceServerRpc(pieceId, x, y);
     }
 
     [ServerRpc(RequireOwnership = false)]
-    private void MovePieceServerRpc(int pieceId, int x, int y)
+    private void Checkers_MovePieceServerRpc(int pieceId, int x, int y)
     {
-        MovePieceClientRpc(pieceId, x, y);
+        Checkers_MovePieceClientRpc(pieceId, x, y);
     }
 
     [ClientRpc]
-    private void MovePieceClientRpc(int pieceId, int x, int y)
+    private void Checkers_MovePieceClientRpc(int pieceId, int x, int y)
     {
         CheckersGameManager.Instance.MovePiece(pieceId, x, y);
     }
 
 
 
-    public void PromotePiece(int pieceId)
+    public void Checkers_PromotePiece(int pieceId)
     {
-        PromotePieceServerRpc(pieceId);
+        Checkers_PromotePieceServerRpc(pieceId);
     }
 
     [ServerRpc(RequireOwnership = false)]
-    private void PromotePieceServerRpc(int pieceId)
+    private void Checkers_PromotePieceServerRpc(int pieceId)
     {
-        PromotePieceClientRpc(pieceId);
+        Checkers_PromotePieceClientRpc(pieceId);
     }
 
     [ClientRpc]
-    private void PromotePieceClientRpc(int pieceId)
+    private void Checkers_PromotePieceClientRpc(int pieceId)
     {
         CheckersGameManager.Instance.PromotePiece(pieceId);
     }
 
 
 
-    public void CapturePiece(int pieceId)
+    public void Checkers_CapturePiece(int pieceId)
     {
         Debug.Log("Triggering capture server rpc");
-        CapturePieceServerRpc(pieceId);
+        Checkers_CapturePieceServerRpc(pieceId);
     }
 
     [ServerRpc(RequireOwnership = false)]
-    private void CapturePieceServerRpc(int pieceId)
+    private void Checkers_CapturePieceServerRpc(int pieceId)
     {
         Debug.Log("Triggering capture client rpc");
-        CapturePieceClientRpc(pieceId);
+        Checkers_CapturePieceClientRpc(pieceId);
     }
 
     [ClientRpc]
-    private void CapturePieceClientRpc(int pieceId)
+    private void Checkers_CapturePieceClientRpc(int pieceId)
     {
         Debug.Log("Triggering local capture");
         CheckersGameManager.Instance.CapturePiece(pieceId);
@@ -115,21 +123,52 @@ public class OnlineGameManager : NetworkBehaviour
 
 
 
-    public void CheckersEndTurn()
+    public void Checkers_EndTurn()
     {
-        CheckersEndTurnServerRpc();
+        Checkers_EndTurnServerRpc();
     }
 
     [ServerRpc(RequireOwnership = false)]
-    private void CheckersEndTurnServerRpc()
+    private void Checkers_EndTurnServerRpc()
     {
-        CheckersEndTurnClientRpc();
+        Checkers_EndTurnClientRpc();
     }
 
     [ClientRpc]
-    private void CheckersEndTurnClientRpc()
+    private void Checkers_EndTurnClientRpc()
     {
         CheckersGameManager.Instance.EndTurn();
+    }
+
+
+
+
+    // WIN SCREEN RPCs
+
+    public void Game_Rematch()
+    {
+        if(!IsHost) return;
+        Game_RematchClientRpc();
+    }
+
+    [ClientRpc]
+    private void Game_RematchClientRpc()
+    {
+        DeckersNetworkManager.Instance.SceneManager.LoadScene("Game", LoadSceneMode.Single);
+    }
+
+
+
+    public void Game_Quit()
+    {
+        if(!IsHost) return;
+        Game_QuitClientRpc();
+    }
+
+    [ClientRpc]
+    private void Game_QuitClientRpc()
+    {
+        Application.Quit();
     }
 
 }

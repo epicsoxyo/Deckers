@@ -5,21 +5,13 @@ using UnityEngine;
 
 
 
-public class CapturedPiecesManager : MonoBehaviour
+public class CaptureManager : MonoBehaviour
 {
 
-    public static CapturedPiecesManager Instance { get; private set; }
+    public static CaptureManager Instance { get; private set; }
 
     [SerializeField] private Transform upperCaptureDial;
     [SerializeField] private Transform lowerCaptureDial;
-    public bool flipDials
-    {
-        get
-        {
-            return DeckersNetworkManager.isOnline
-                && OnlineGameManager.Instance.localTeam == Team.TEAM_WHITE;
-        }
-    }
 
     private List<Transform> _upperCaptureSlots = new List<Transform>();
     private List<Transform> _lowerCaptureSlots = new List<Transform>();
@@ -56,15 +48,16 @@ public class CapturedPiecesManager : MonoBehaviour
 
 
 
-    public void CapturePiece(GamePiece capturedPiece)
+    public void Capture(GamePiece capturedPiece)
     {
 
         List<Transform> captureSlots;
+        bool flipDials = (OnlineGameManager.Instance.localTeam == Team.TEAM_RED);
 
         switch(capturedPiece.player)
         {
             case Team.TEAM_WHITE:
-                captureSlots = flipDials ? _upperCaptureSlots : _lowerCaptureSlots;
+                captureSlots = flipDials ? _lowerCaptureSlots : _upperCaptureSlots;
                 Debug.Log($"White captured pieces: {whiteCapturedPieces}; Capture slots: {captureSlots.Count}");
 
                 capturedPiece.transform.SetParent(captureSlots[whiteCapturedPieces]);
@@ -80,7 +73,7 @@ public class CapturedPiecesManager : MonoBehaviour
                 break;
 
             case Team.TEAM_RED:
-                captureSlots = flipDials ? _lowerCaptureSlots : _upperCaptureSlots;
+                captureSlots = flipDials ? _upperCaptureSlots : _lowerCaptureSlots;
                 Debug.Log($"Red captured pieces: {redCapturedPieces}; Capture slots: {captureSlots.Count}");
 
                 capturedPiece.transform.SetParent(captureSlots[redCapturedPieces]);
@@ -104,7 +97,6 @@ public class CapturedPiecesManager : MonoBehaviour
     private void TriggerWin(Team winningTeam)
     {
 
-        Debug.Log($"Triggering win for {winningTeam}.");
         switch(winningTeam)
         {
             case Team.TEAM_WHITE:
