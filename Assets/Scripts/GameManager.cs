@@ -4,11 +4,11 @@ using UnityEngine;
 
 
 
-public enum Team
+public enum Team : byte
 {
-    TEAM_NULL,
-    TEAM_WHITE,
-    TEAM_RED,
+    TEAM_NULL = 0x00,
+    TEAM_WHITE = 0x01,
+    TEAM_RED = 0x02,
 }
 
 
@@ -35,8 +35,9 @@ public class LocalGameManager : MonoBehaviour
 
     private int _currentTurn = 1;
     private GameState _currentGameState = GameState.STATE_WAITING_FOR_PLAYERS;
-    private bool _waitingForAction = true;
+    private bool _waitingForAction = false;
 
+    public event EventHandler onGameStart;
     public event EventHandler onWhiteWin;
     public event EventHandler onRedWin;
 
@@ -69,9 +70,12 @@ public class LocalGameManager : MonoBehaviour
 
     }
 
+
+
     public void StartGame()
     {
-        _currentGameState = GameState.STATE_WHITE_CHECKERS;
+        Debug.Log("Started game!");
+        onGameStart?.Invoke(this, EventArgs.Empty);
         _waitingForAction = false;
     }
 
@@ -79,6 +83,7 @@ public class LocalGameManager : MonoBehaviour
 
     private void OnAction(object sender, EventArgs e)
     {
+        Debug.Log("Action received");
         _waitingForAction = false;
     }
 
@@ -109,65 +114,61 @@ public class LocalGameManager : MonoBehaviour
     private void Update()
     {
 
-        // TODO: complete turns script
-
         if(_waitingForAction) return;
+
+        _waitingForAction = true;
 
         switch(_currentGameState)
         {
             case GameState.STATE_WAITING_FOR_PLAYERS:
                 _currentGameState = GameState.STATE_WHITE_CHECKERS;
+                while(OnlineGameManager.Instance == null) return;
                 break;
 
             case GameState.STATE_START_OF_TURN:
-                // start of turn card effects in order they were played
                 _currentGameState = GameState.STATE_WHITE_CARDS;
+                DeckersGameManager.Instance.TriggerAbilities(GameState.STATE_START_OF_TURN);
                 break;
 
             case GameState.STATE_WHITE_CARDS:
-                DeckersGameManager.Instance.BeginTurn(Team.TEAM_WHITE);
                 _currentGameState = GameState.STATE_RED_CARDS;
-                _waitingForAction = true;
+                DeckersGameManager.Instance.BeginTurn(Team.TEAM_WHITE);
                 break;
 
             case GameState.STATE_RED_CARDS:
-                DeckersGameManager.Instance.BeginTurn(Team.TEAM_RED);
                 _currentGameState = GameState.STATE_MIDDLE_OF_TURN;
-                _waitingForAction = true;
+                DeckersGameManager.Instance.BeginTurn(Team.TEAM_RED);
                 break;
 
             case GameState.STATE_MIDDLE_OF_TURN:
-                // middle of turn card effects in order they were played
                 _currentGameState = GameState.STATE_WHITE_CHECKERS;
+                DeckersGameManager.Instance.TriggerAbilities(GameState.STATE_MIDDLE_OF_TURN);
                 break;
 
             case GameState.STATE_WHITE_CHECKERS:
-                CheckersGameManager.Instance.BeginTurn(Team.TEAM_WHITE);
                 _currentGameState = GameState.STATE_RED_CHECKERS;
-                _waitingForAction = true;
+                CheckersGameManager.Instance.BeginTurn(Team.TEAM_WHITE);
                 break;
 
             case GameState.STATE_RED_CHECKERS:
-                CheckersGameManager.Instance.BeginTurn(Team.TEAM_RED);
                 _currentGameState = GameState.STATE_END_OF_TURN;
-                _waitingForAction = true;
+                CheckersGameManager.Instance.BeginTurn(Team.TEAM_RED);
                 break;
 
             case GameState.STATE_END_OF_TURN:
-                // end of turn card effects in the order they were played
-                _currentGameState = (++_currentTurn > 3) ?
+                _currentGameState = (++_currentTurn % 3 == 0) ?
                     GameState.STATE_START_OF_TURN : 
                     GameState.STATE_WHITE_CHECKERS;
+                DeckersGameManager.Instance.TriggerAbilities(GameState.STATE_END_OF_TURN);
                 break;
 
             case GameState.STATE_END_OF_GAME:
-                // end of game card effects (e.g. donkey)
-                // determine a winner
+                DeckersGameManager.Instance.TriggerAbilities(GameState.STATE_END_OF_GAME);
                 break;
 
         }
 
-        // _waitingForAction = true;
+        Debug.Log(_currentGameState);
 
     }
 

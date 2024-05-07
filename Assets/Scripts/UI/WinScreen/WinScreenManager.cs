@@ -111,11 +111,11 @@ public class WinScreenManager : MonoBehaviour
     
         if(isHost)
         {
-            redWinText.SetText("You win!");
+            redWinText.SetText("You lose...");
         }
         else
         {
-            redWinText.SetText("You lose...");
+            redWinText.SetText("You win!");
         }
 
     }

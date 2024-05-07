@@ -1,6 +1,5 @@
-using System;
+using System.Collections;
 using Unity.Netcode;
-
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -16,7 +15,8 @@ public class OnlineGameManager : NetworkBehaviour
     {
         get
         {
-            return (DeckersNetworkManager.Instance.IsHost) ? Team.TEAM_WHITE : Team.TEAM_RED;
+            if(!DeckersNetworkManager.isOnline) return Team.TEAM_NULL;
+            return DeckersNetworkManager.Instance.IsHost ? Team.TEAM_WHITE : Team.TEAM_RED;
         }
     }
 
@@ -24,7 +24,7 @@ public class OnlineGameManager : NetworkBehaviour
 
     private void Awake()
     {
-        
+
         if (Instance != null)
         {
             Debug.LogWarning("Multiple instances of OnlineGameManager detected!");
@@ -37,23 +37,37 @@ public class OnlineGameManager : NetworkBehaviour
 
 
 
-    private void Start()
-    {
-        LobbyManager.Instance.onGameStart += StartGame;
-    }
-
-
-
     // GAME MANAGER RPCs
 
-    private void StartGame(object sender, EventArgs e)
+    public void StartGame()
     {
+        Debug.Log("Starting online game...");
+        StartCoroutine("StartGameCoroutine");
+    }
+
+    private IEnumerator StartGameCoroutine()
+    {
+        Debug.Log("Entered coroutine...");
+
+        if(IsHost)
+        {
+            while(DeckersNetworkManager.Instance.ConnectedClients.Count < 2) yield return null;
+        }
+        else
+        {
+            while(!IsClient) yield return null;
+        }
+
+        Debug.Log("Connected!");
 
         if(localTeam == Team.TEAM_RED)
         {
+            Debug.Log("Local team is red.");
             Transform playableArea = CheckersGameManager.Instance.playableArea;
             playableArea.GetComponent<GridLayoutGroup>().startCorner = GridLayoutGroup.Corner.LowerRight;
         }
+
+        Debug.Log("Starting game locally...");
 
         LocalGameManager.Instance.StartGame();
 
@@ -117,7 +131,6 @@ public class OnlineGameManager : NetworkBehaviour
     [ClientRpc]
     private void Checkers_CapturePieceClientRpc(int pieceId)
     {
-        Debug.Log("Triggering local capture");
         CheckersGameManager.Instance.CapturePiece(pieceId);
     }
 
@@ -137,9 +150,101 @@ public class OnlineGameManager : NetworkBehaviour
     [ClientRpc]
     private void Checkers_EndTurnClientRpc()
     {
-        CheckersGameManager.Instance.EndTurn();
+        CheckersGameManager.Instance.LocalEndTurn();
     }
 
+
+
+    // DECKERS MANAGER RPCs
+
+    public void Deckers_SwapLocalSlots()
+    {
+        Deckers_SwapLocalSlotsClientRpc();
+    }
+
+    [ClientRpc]
+    private void Deckers_SwapLocalSlotsClientRpc()
+    {
+        if(IsHost) return;
+        CardsManager.Instance.SwapLocalSlots();
+    }
+
+
+
+    public void Deckers_DrawCard(Team team, int cardId)
+    {
+        if(!IsHost) return;
+        Deckers_DrawCardServerRpc((byte)team, cardId);
+    }
+
+    [ServerRpc]
+    private void Deckers_DrawCardServerRpc(byte team, int cardId)
+    {
+        Deckers_DrawCardClientRpc(team, cardId);
+    }
+
+    [ClientRpc]
+    private void Deckers_DrawCardClientRpc(byte team, int cardId)
+    {
+        CardsManager.Instance.LocalDrawCard((Team)team, cardId);
+    }
+
+
+
+    public void Deckers_SwapSlots(int slot1, int slot2)
+    {
+        Deckers_SwapSlotsServerRpc(slot1, slot2);
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void Deckers_SwapSlotsServerRpc(int slot1, int slot2)
+    {
+        Deckers_SwapSlotsClientRpc(slot1, slot2);
+    }
+
+    [ClientRpc]
+    private void Deckers_SwapSlotsClientRpc(int slot1, int slot2)
+    {
+        DropAreaManager.Instance.LocalSwap(slot1, slot2);
+    }
+
+
+
+    public void Deckers_PlayCard(int cardId)
+    {
+        Deckers_PlayCardServerRpc(cardId);
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void Deckers_PlayCardServerRpc(int cardId)
+    {
+        Deckers_PlayCardClientRpc(cardId);
+    }
+
+    [ClientRpc]
+    private void Deckers_PlayCardClientRpc(int cardId)
+    {
+        DeckersGameManager.Instance.LocalPlayCard(cardId);
+    }
+
+
+
+    public void Deckers_EndTurn()
+    {
+        Deckers_EndTurnServerRpc();
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void Deckers_EndTurnServerRpc()
+    {
+        Deckers_EndTurnClientRpc();
+    }
+
+    [ClientRpc]
+    private void Deckers_EndTurnClientRpc()
+    {
+        DeckersGameManager.Instance.LocalEndTurn();
+    }
 
 
 

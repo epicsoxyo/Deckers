@@ -1,6 +1,7 @@
 using System;
 
 using Unity.Netcode;
+using UnityEngine;
 
 
 
@@ -17,7 +18,7 @@ public class DeckersNetworkManager : NetworkManager
         get
         {
             if (Singleton == null) return false;
-            return Singleton.IsServer || Singleton.IsClient;
+            return Singleton.IsClient;
         }
     }
 

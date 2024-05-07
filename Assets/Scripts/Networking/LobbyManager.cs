@@ -24,7 +24,6 @@ public class LobbyManager : MonoBehaviour
 
     private ILobbyEvents lobbyEvents;
     public event EventHandler onLobbyChanged;
-    public EventHandler onGameStart;
 
 
 
@@ -272,16 +271,12 @@ public class LobbyManager : MonoBehaviour
         changes.ApplyToLobby(currentLobby);
         onLobbyChanged.Invoke(this, EventArgs.Empty);
 
-
-        Debug.Log(currentLobby.Name);
-        Debug.Log(currentLobby.Data["RelayCode"].Value);
-
         if(isLobbyHost) return;
 
         if(currentLobby.Data["RelayCode"].Value != "0")
         {
-            onGameStart?.Invoke(this, EventArgs.Empty);
             await RelayManager.Instance.JoinRelay(currentLobby.Data["RelayCode"].Value);
+            OnlineGameManager.Instance.StartGame();
         }
 
     }
@@ -351,10 +346,10 @@ public class LobbyManager : MonoBehaviour
 
 
 
-    public async void StartGame()
+    public async Task<bool> StartGame()
     {
 
-        if(currentLobby.Players.Count != 2) return;
+        if(currentLobby.Players.Count != 2) return false;
 
         try
         {
@@ -368,14 +363,18 @@ public class LobbyManager : MonoBehaviour
                 }
             };
 
-            Lobby lobby = await Lobbies.Instance.UpdateLobbyAsync(currentLobby.Id, options);
+            currentLobby = await Lobbies.Instance.UpdateLobbyAsync(currentLobby.Id, options);
 
-            onGameStart?.Invoke(this, EventArgs.Empty);
+            OnlineGameManager.Instance.StartGame();
+
+            return true;
         }
         catch (LobbyServiceException ex)
         {
-            Debug.Log(ex);
+            Debug.LogError("Failed to start game due to exception: " + ex);
         }
+
+        return false;
 
     }
 

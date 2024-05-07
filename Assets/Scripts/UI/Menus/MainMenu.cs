@@ -56,12 +56,16 @@ public class MainMenu : MonoBehaviour
     private async Task CreateLobby()
     {
 
-        string playerName = "Player"; // hostPlayerName.text;
+        createLobbyButton.interactable = false;
+
+        string playerName = "Ready"; // hostPlayerName.text;
 
         bool lobbyCreated = await LobbyManager.Instance.CreateLobby(playerName);
         if (!lobbyCreated)
         {
             // TODO: add pop up that says lobby could not be created
+
+            // OpenPanel(MenuPanel.ERROR);
 
             Debug.LogError("lobby could not be created");
             return;
@@ -71,17 +75,20 @@ public class MainMenu : MonoBehaviour
         lobbyMenu.SetLobbyInfoUI(LobbyManager.Instance.currentLobby);
         lobbyMenu.UpdateLobbyInfoUI();
 
+
     }
 
 
     private async Task JoinLobby()
     {
 
+        joinLobbyButton.interactable = false;
+
         string lobbyCode = lobbyCodeField.text.ToUpper();
         if(lobbyCode == null) return;
         // string playerName = playerNameField.text;
 
-        bool lobbyCreated = await LobbyManager.Instance.JoinLobby(lobbyCode, "Player");
+        bool lobbyCreated = await LobbyManager.Instance.JoinLobby(lobbyCode, "Ready");
 
         if (!lobbyCreated)
         {
@@ -134,6 +141,9 @@ public class MainMenu : MonoBehaviour
         panelCanvasGroup.alpha = 0f;
         panelCanvasGroup.interactable = false;
         panelCanvasGroup.blocksRaycasts = false;
+
+        createLobbyButton.interactable = true;
+        joinLobbyButton.interactable = true;
 
     }
 

@@ -43,7 +43,7 @@ public class LobbyMenu : Menu
 
         leaveLobbyButton.onClick.AddListener(async () => await LeaveLobby());
 
-        startButton.onClick.AddListener(() => LobbyManager.Instance.StartGame());
+        startButton.onClick.AddListener(StartGame);
 
     }
 
@@ -51,6 +51,7 @@ public class LobbyMenu : Menu
 
     public void SetLobbyInfoUI(Lobby lobby)
     {
+        startButton.interactable = true;
         lobbyCode.SetText(lobby.LobbyCode);
         lobbyName.SetText(lobby.Name);
     }
@@ -105,6 +106,14 @@ public class LobbyMenu : Menu
         MainMenu.Instance.CloseCurrentPanel();
         Debug.Log("Left Lobby");
 
+    }
+
+
+
+    private async void StartGame()
+    {
+        startButton.interactable = false;
+        startButton.interactable = !await LobbyManager.Instance.StartGame();
     }
 
 }

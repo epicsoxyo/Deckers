@@ -57,8 +57,7 @@ public class CaptureManager : MonoBehaviour
         switch(capturedPiece.player)
         {
             case Team.TEAM_WHITE:
-                captureSlots = flipDials ? _lowerCaptureSlots : _upperCaptureSlots;
-                Debug.Log($"White captured pieces: {whiteCapturedPieces}; Capture slots: {captureSlots.Count}");
+                captureSlots = flipDials ? _upperCaptureSlots : _lowerCaptureSlots;
 
                 capturedPiece.transform.SetParent(captureSlots[whiteCapturedPieces]);
                 whiteCapturedPieces++;
@@ -73,7 +72,7 @@ public class CaptureManager : MonoBehaviour
                 break;
 
             case Team.TEAM_RED:
-                captureSlots = flipDials ? _upperCaptureSlots : _lowerCaptureSlots;
+                captureSlots = flipDials ? _lowerCaptureSlots : _upperCaptureSlots;
                 Debug.Log($"Red captured pieces: {redCapturedPieces}; Capture slots: {captureSlots.Count}");
 
                 capturedPiece.transform.SetParent(captureSlots[redCapturedPieces]);

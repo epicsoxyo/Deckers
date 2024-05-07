@@ -54,7 +54,7 @@ public class CheckersGameManager : MonoBehaviour
 
         gamePieces = new Dictionary<int, GamePiece>();
 
-        _skipTurnButton.onClick.AddListener(TriggerEndTurn);
+        _skipTurnButton.onClick.AddListener(EndTurn);
 
         GenerateBoard();
         InitialiseGamePieces();
@@ -116,6 +116,8 @@ public class CheckersGameManager : MonoBehaviour
     public void BeginTurn(Team player)
     {
 
+        Debug.Log("Beginning turn");
+
         _currentPlayer = player;
 
         UpdateActivePieces();
@@ -165,6 +167,8 @@ public class CheckersGameManager : MonoBehaviour
 
         _selectedPiece = gamePiece;
 
+        if(_selectedPiece == null) return;
+
         Transform selectedPieceParent = _selectedPiece.transform.parent;
         if(selectedPieceParent == null
         || !selectedPieceParent.TryGetComponent(out GridSquare currentSquare))
@@ -199,7 +203,7 @@ public class CheckersGameManager : MonoBehaviour
             }
         }
 
-        if(_isCapturing && _availableMoves.Count == 0) TriggerEndTurn();
+        if(_isCapturing && _availableMoves.Count == 0) EndTurn();
 
     }
 
@@ -214,6 +218,10 @@ public class CheckersGameManager : MonoBehaviour
         }
 
         _availableMoves.Clear();
+
+        if(_selectedPiece == null) return;
+
+        _selectedPiece.SetActive(false);
         _selectedPiece = null;
 
     }
@@ -281,7 +289,7 @@ public class CheckersGameManager : MonoBehaviour
         GamePiece capturedPiece = _availableMoves[destination];
         if(capturedPiece == null)
         {
-            TriggerEndTurn();
+            EndTurn();
             return;
         }
 
@@ -312,6 +320,7 @@ public class CheckersGameManager : MonoBehaviour
         if(foundPiece == null)
         {
             Debug.LogError("Could not find piece with id" + pieceId);
+            return null;
         }
 
         return foundPiece;
@@ -338,15 +347,25 @@ public class CheckersGameManager : MonoBehaviour
 
         _isCapturing = true;
 
-        gamePieces.Remove(capturedPiece.id);
+        if(gamePieces.ContainsKey(capturedPiece.id))
+        {
+            gamePieces.Remove(capturedPiece.id);
+        }
 
         capturedPiece.Capture();
+
+        foreach(GamePiece piece in gamePieces.Values)
+        {
+            piece.SetActive(piece == _selectedPiece);
+        }
+
+        DisplayAvailableMoves(_selectedPiece);
 
     }
 
 
 
-    public void TriggerEndTurn()
+    public void EndTurn()
     {
 
         if(DeckersNetworkManager.isOnline)
@@ -355,11 +374,11 @@ public class CheckersGameManager : MonoBehaviour
             return;
         }
 
-        EndTurn();
+        LocalEndTurn();
 
     }
 
-    public void EndTurn()
+    public void LocalEndTurn()
     {
 
         ClearCurrentSelection();

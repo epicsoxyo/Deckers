@@ -55,7 +55,10 @@ public class SignInManager : MonoBehaviour
         {
             SwitchProfilesIfClone();
 
-            await AuthenticationService.Instance.SignInAnonymouslyAsync();
+            if(!AuthenticationService.Instance.IsSignedIn)
+            {
+                await AuthenticationService.Instance.SignInAnonymouslyAsync();
+            }
             
             Debug.Log("Anonymous sign-in successful!\n" +
                 $"Profile: {AuthenticationService.Instance.Profile}\n" +
