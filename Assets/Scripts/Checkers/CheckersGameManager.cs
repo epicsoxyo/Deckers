@@ -219,11 +219,6 @@ public class CheckersGameManager : MonoBehaviour
 
         _availableMoves.Clear();
 
-        if(_selectedPiece == null) return;
-
-        _selectedPiece.SetActive(false);
-        _selectedPiece = null;
-
     }
 
 
@@ -382,6 +377,12 @@ public class CheckersGameManager : MonoBehaviour
     {
 
         ClearCurrentSelection();
+
+        if(_selectedPiece != null)
+        {
+            _selectedPiece.SetActive(false);
+            _selectedPiece = null;
+        }
 
         _isCapturing = false;
 
