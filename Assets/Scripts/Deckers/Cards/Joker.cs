@@ -9,8 +9,23 @@ public class Joker : Card
 
     public override void OnPlay()
     {
-        CardsManager.Instance.DrawCard(team);
+        StartCoroutine("PlayJoker");
     }
+
+    private IEnumerator PlayJoker()
+    {
+
+        // ScreenManager.Instance.SwitchToScreen(UIScreen.SCREEN_EMPTY);
+
+        CardsManager.Instance.DrawCard(team);
+
+        yield return new WaitForSeconds(1f);
+
+        DeckersGameManager.Instance.EndTurn();
+
+    }
+
+
 
     public override void OnDeckersTurnStart() {}
 

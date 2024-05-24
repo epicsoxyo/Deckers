@@ -64,7 +64,6 @@ public class CaptureManager : MonoBehaviour
 
                 if(whiteCapturedPieces >= captureSlots.Count)
                 {
-                    Debug.Log("Sufficient captures for a win.");
                     TriggerWin(Team.TEAM_RED);
                     return;
                 }
@@ -73,14 +72,12 @@ public class CaptureManager : MonoBehaviour
 
             case Team.TEAM_RED:
                 captureSlots = flipDials ? _lowerCaptureSlots : _upperCaptureSlots;
-                Debug.Log($"Red captured pieces: {redCapturedPieces}; Capture slots: {captureSlots.Count}");
 
                 capturedPiece.transform.SetParent(captureSlots[redCapturedPieces]);
                 redCapturedPieces++;
 
                 if(redCapturedPieces >= captureSlots.Count)
                 {
-                    Debug.Log("Sufficient captures for a win.");
                     TriggerWin(Team.TEAM_WHITE);
                     return;
                 }
@@ -99,15 +96,37 @@ public class CaptureManager : MonoBehaviour
         switch(winningTeam)
         {
             case Team.TEAM_WHITE:
-                Debug.Log("Invoking onWhiteWin");
                 onWhiteWin?.Invoke(this, EventArgs.Empty);
                 return;
             case Team.TEAM_RED:
-                Debug.Log("Invoking onRedWin");
                 onRedWin?.Invoke(this, EventArgs.Empty);
                 return;
         }
     }
 
+
+
+    public GamePiece Pop(Team team)
+    {
+
+        List<Transform> captureSlots = null;
+        bool flipDials = (OnlineGameManager.Instance.localTeam == Team.TEAM_RED);
+
+        switch(team)
+        {
+            case Team.TEAM_WHITE:
+                captureSlots = flipDials ? _upperCaptureSlots : _lowerCaptureSlots;
+                if(captureSlots == null) return null;
+                return captureSlots[--whiteCapturedPieces].GetChild(0).GetComponent<GamePiece>();
+
+            case Team.TEAM_RED:
+                captureSlots = flipDials ? _lowerCaptureSlots : _upperCaptureSlots;
+                if(captureSlots == null) return null;
+                return captureSlots[--redCapturedPieces].GetChild(0).GetComponent<GamePiece>();
+        }
+
+        return null;
+
+    }
 
 }

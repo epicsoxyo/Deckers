@@ -116,8 +116,6 @@ public class CheckersGameManager : MonoBehaviour
     public void BeginTurn(Team player)
     {
 
-        Debug.Log("Beginning turn");
-
         _currentPlayer = player;
 
         UpdateActivePieces();

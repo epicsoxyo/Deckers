@@ -62,7 +62,6 @@ public class DropArea : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 
     public virtual void SwapForThis(DraggableElement draggableElement)
     {
-        Debug.Log("Swapping to slot " + name);
         DropArea areaToSwapWith = draggableElement.transform.parent.GetComponent<DropArea>();
         DropAreaManager.Instance.Swap(this, areaToSwapWith);
     }

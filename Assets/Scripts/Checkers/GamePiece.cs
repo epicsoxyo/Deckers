@@ -46,6 +46,7 @@ public class GamePiece : MonoBehaviour
     [Header("Piece Components")]
     [SerializeField] private Sprite normalImage;
     [SerializeField] private Sprite kingImage;
+    [SerializeField] private Sprite capturedImage;
     private Image _image;
     private Button _gamePieceButton;
 
@@ -75,6 +76,7 @@ public class GamePiece : MonoBehaviour
         
         CheckersGameManager.Instance.onWhiteActive += OnWhiteBeginTurn;
         CheckersGameManager.Instance.onRedActive += OnRedBeginTurn;
+        CheckersGameManager.Instance.onEndTurn += OnEndTurn;
 
     }
 
@@ -92,6 +94,14 @@ public class GamePiece : MonoBehaviour
     {
         if(_isCaptured) return;
         _gamePieceButton.interactable = (player == Team.TEAM_RED);
+    }
+
+
+
+    private void OnEndTurn(object sender, EventArgs e)
+    {
+        if(_isCaptured) return;
+        _gamePieceButton.interactable = false;
     }
 
 
@@ -129,12 +139,11 @@ public class GamePiece : MonoBehaviour
     public void Capture(bool revert = false, GridSquare gridSquare = null)
     {
 
-        GetComponent<AspectRatioFitter>().enabled = revert;
-
         if(!revert) _gamePieceButton.interactable = true;
         _gamePieceButton.enabled = !revert;
 
         _isCaptured = !revert;
+        _image.sprite = revert ? (pieceType == GamePieceType.PIECE_KING ? kingImage : normalImage) : capturedImage;
 
         if(revert)
         {

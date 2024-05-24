@@ -193,6 +193,8 @@ public class CardsManager : MonoBehaviour
     public void EmptyPlayArea()
     {
 
+        playArea.GetComponent<CardDropArea>().ClearDescription();
+
         if(playArea.childCount == 0) return;
 
         Card activeCard =  playArea.GetChild(0).GetComponent<Card>();
@@ -211,8 +213,6 @@ public class CardsManager : MonoBehaviour
         {
             Destroy(activeCard);
         }
-
-        playArea.GetComponent<CardDropArea>().ClearDescription();
 
     }
 

@@ -37,6 +37,7 @@ public class LobbyManager : MonoBehaviour
         }
 
         Instance = this;
+        DontDestroyOnLoad(gameObject);
 
     }
 
@@ -56,7 +57,7 @@ public class LobbyManager : MonoBehaviour
             catch(ArgumentNullException ex)
             { 
                 Debug.LogError(ex);
-                Debug.Log("Failed to send heartbeat due to invalid Parameters");
+                Debug.LogError("Failed to send heartbeat due to invalid Parameters");
                 yield break;
             }
             catch(LobbyServiceException ex)
@@ -192,12 +193,12 @@ public class LobbyManager : MonoBehaviour
         }
         catch (LobbyServiceException ex)
         {
-            Debug.Log("Tried to leave lobby but currentLobby does not exist! Exception: " + ex);
+            Debug.LogError("Tried to leave lobby but currentLobby does not exist! Exception: " + ex);
             return false;
         }
         catch (Exception ex)
         {
-            Debug.Log("Could not leave lobby due to exception: " + ex);
+            Debug.LogError("Could not leave lobby due to exception: " + ex);
             return false;
         }
 
@@ -217,7 +218,7 @@ public class LobbyManager : MonoBehaviour
         }
         catch (LobbyServiceException e)
         {
-            Debug.Log("Failed to delete lobby due to exception: " + e);
+            Debug.LogError("Failed to delete lobby due to exception: " + e);
             return false;
         }
 

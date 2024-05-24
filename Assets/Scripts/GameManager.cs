@@ -33,7 +33,7 @@ public class LocalGameManager : MonoBehaviour
 
     public static LocalGameManager Instance { get; private set;}
 
-    private int _currentTurn = 1;
+    private int _currentTurn = 0;
     private GameState _currentGameState = GameState.STATE_WAITING_FOR_PLAYERS;
     private bool _waitingForAction = false;
 
@@ -68,22 +68,27 @@ public class LocalGameManager : MonoBehaviour
         CaptureManager.Instance.onWhiteWin += OnWhiteWin;
         CaptureManager.Instance.onRedWin += OnRedWin;
 
+        if(DeckersNetworkManager.isOnline){ OnlineGameManager.Instance.StartGame(); }
+        else{ StartGame(); }
+
     }
 
 
 
     public void StartGame()
     {
-        Debug.Log("Started game!");
-        onGameStart?.Invoke(this, EventArgs.Empty);
+
+        _currentGameState = GameState.STATE_WHITE_CHECKERS;
         _waitingForAction = false;
+
+        onGameStart?.Invoke(this, EventArgs.Empty);
+
     }
 
 
 
     private void OnAction(object sender, EventArgs e)
     {
-        Debug.Log("Action received");
         _waitingForAction = false;
     }
 
@@ -121,8 +126,6 @@ public class LocalGameManager : MonoBehaviour
         switch(_currentGameState)
         {
             case GameState.STATE_WAITING_FOR_PLAYERS:
-                _currentGameState = GameState.STATE_WHITE_CHECKERS;
-                while(OnlineGameManager.Instance == null) return;
                 break;
 
             case GameState.STATE_START_OF_TURN:
@@ -167,8 +170,6 @@ public class LocalGameManager : MonoBehaviour
                 break;
 
         }
-
-        Debug.Log(_currentGameState);
 
     }
 

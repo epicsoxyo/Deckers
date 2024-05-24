@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: ab66703689f66cb459a9cffd1a367b70
+guid: aa86dfaa804680a458114b5930825164
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -45,7 +45,7 @@ TextureImporter:
   compressionQuality: 50
   spriteMode: 2
   spriteExtrude: 1
-  spriteMeshType: 1
+  spriteMeshType: 0
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
   spritePixelsToUnits: 100
@@ -123,13 +123,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: DeckersHUD_0
+      name: DeckersButtons_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 124
-        height: 124
+        width: 30
+        height: 10
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -137,20 +137,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: a875e6f08b13d164faeb65ef25f44214
-      internalID: -2086853653
+      spriteID: 5a85f24543a605e47baddeee4de95230
+      internalID: 1937520506
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: DeckersHUD_1
+      name: DeckersButtons_1
       rect:
         serializedVersion: 2
-        x: 124
+        x: 30
         y: 0
-        width: 124
-        height: 124
+        width: 30
+        height: 10
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -158,8 +158,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 5b3743abe7150fa4ba554f97530e1549
-      internalID: 92761789
+      spriteID: 480694eb0207efa4ba301dbee3a752fe
+      internalID: 1089358045
       vertices: []
       indices: 
       edges: []
@@ -175,8 +175,8 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      DeckersHUD_0: -2086853653
-      DeckersHUD_1: 92761789
+      DeckersButtons_0: 1937520506
+      DeckersButtons_1: 1089358045
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

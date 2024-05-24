@@ -68,7 +68,7 @@ public abstract class Card : MonoBehaviour
 
     public string GetName()
     {
-        return description.name;
+        return description.cardName;
     }
 
 

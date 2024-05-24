@@ -41,7 +41,7 @@ public class GridSquare : MonoBehaviour
     private void Start()
     {
         RectTransform rectTransform = transform as RectTransform;
-        rectTransform.localScale = new Vector3(1, 1, 1);
+        // rectTransform.localScale = new Vector3(1, 1, 1);
     }
 
 

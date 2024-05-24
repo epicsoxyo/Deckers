@@ -36,7 +36,7 @@ public class DraggableElement : MonoBehaviour, IBeginDragHandler, IEndDragHandle
 
     private void Start()
     {
-        _rectTransform.localScale = new Vector3(1, 1, 1);
+        // _rectTransform.localScale = new Vector3(1, 1, 1);
     }
 
 

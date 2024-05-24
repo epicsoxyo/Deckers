@@ -47,7 +47,6 @@ public class OnlineGameManager : NetworkBehaviour
 
     private IEnumerator StartGameCoroutine()
     {
-        Debug.Log("Entered coroutine...");
 
         if(IsHost)
         {
@@ -62,12 +61,9 @@ public class OnlineGameManager : NetworkBehaviour
 
         if(localTeam == Team.TEAM_RED)
         {
-            Debug.Log("Local team is red.");
             Transform playableArea = CheckersGameManager.Instance.playableArea;
             playableArea.GetComponent<GridLayoutGroup>().startCorner = GridLayoutGroup.Corner.LowerRight;
         }
-
-        Debug.Log("Starting game locally...");
 
         LocalGameManager.Instance.StartGame();
 
@@ -117,14 +113,12 @@ public class OnlineGameManager : NetworkBehaviour
 
     public void Checkers_CapturePiece(int pieceId)
     {
-        Debug.Log("Triggering capture server rpc");
         Checkers_CapturePieceServerRpc(pieceId);
     }
 
     [ServerRpc(RequireOwnership = false)]
     private void Checkers_CapturePieceServerRpc(int pieceId)
     {
-        Debug.Log("Triggering capture client rpc");
         Checkers_CapturePieceClientRpc(pieceId);
     }
 

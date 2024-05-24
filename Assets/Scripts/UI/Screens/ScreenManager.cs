@@ -5,7 +5,6 @@ using UnityEngine;
 public enum UIScreen
 {
     SCREEN_EMPTY, // no UI on screen
-    SCREEN_MAIN_MENU, // main menu
     SCREEN_CHECKERS, // checkers UI
     SCREEN_DECKERS, // Deckers cards UI
     SCREEN_GAME_OVER, // game over screen

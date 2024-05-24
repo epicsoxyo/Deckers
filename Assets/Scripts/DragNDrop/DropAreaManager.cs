@@ -45,16 +45,11 @@ public class DropAreaManager : MonoBehaviour
     public void Swap(DropArea slot1, DropArea slot2)
     {
 
-        Debug.Log("Starting the swap");
-
         if(DeckersNetworkManager.isOnline)
         {
-            Debug.Log("Is online");
             OnlineGameManager.Instance.Deckers_SwapSlots(slot1.areaId, slot2.areaId);
             return;
         }
-
-        Debug.Log("Is not online");
 
         LocalSwap(slot1.areaId, slot2.areaId);
 
@@ -65,23 +60,17 @@ public class DropAreaManager : MonoBehaviour
     public void LocalSwap(int slot1, int slot2)
     {
 
-        Debug.Log("Starting the swap locally");
-
         DropArea dropArea1 = indexToArea[slot1];
         DropArea dropArea2 = indexToArea[slot2];
 
-        Debug.Log($"Drop area 1: {dropArea1.name}; Drop area 2: {dropArea2.name}");
-
         if(dropArea1.transform.childCount > 0)
         {
-            Debug.Log("Detected a child in " + dropArea1.name);
             DraggableElement element1 = dropArea1.transform.GetChild(0).GetComponent<DraggableElement>();
             element1.SetMostRecentSlot(dropArea2.transform);
         }
 
         if(dropArea2.transform.childCount > 0)
         {
-            Debug.Log("Detected a child in " + dropArea2.name);
             DraggableElement element2 = dropArea2.transform.GetChild(0).GetComponent<DraggableElement>();
             element2.SetMostRecentSlot(dropArea1.transform); 
         }

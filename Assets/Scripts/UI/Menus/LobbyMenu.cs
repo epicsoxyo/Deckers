@@ -54,6 +54,7 @@ public class LobbyMenu : Menu
         startButton.interactable = true;
         lobbyCode.SetText(lobby.LobbyCode);
         lobbyName.SetText(lobby.Name);
+        UpdateLobbyInfoUI();
     }
 
 
@@ -99,7 +100,7 @@ public class LobbyMenu : Menu
         {
             // TODO: add pop up that says lobby could not be created
 
-            Debug.Log("lobby could not be left");
+            Debug.LogError("Lobby could not be left");
             return;
         }
 

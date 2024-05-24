@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.Tracing;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -129,13 +128,10 @@ public class DeckersGameManager : MonoBehaviour
         if(DeckersNetworkManager.isOnline)
         {
             OnlineGameManager.Instance.Deckers_PlayCard(card.cardId);
-        }
-        else
-        {
-            LocalPlayCard(card.cardId);
+            return;
         }
 
-        EndTurn();
+        LocalPlayCard(card.cardId);
 
     }
 
@@ -159,7 +155,6 @@ public class DeckersGameManager : MonoBehaviour
         switch(gameState)
         {
             case GameState.STATE_START_OF_TURN:
-                Debug.Log("Entered switch statement");
                 break;
             case GameState.STATE_MIDDLE_OF_TURN:
                 break;
@@ -169,7 +164,6 @@ public class DeckersGameManager : MonoBehaviour
                 break;
         }
 
-        Debug.Log("Ending turn " + gameState);
         onEndTurn?.Invoke(this, EventArgs.Empty);
 
     }
@@ -178,7 +172,6 @@ public class DeckersGameManager : MonoBehaviour
 
     public void EndTurn()
     {
-
 
         if(DeckersNetworkManager.isOnline)
         {
