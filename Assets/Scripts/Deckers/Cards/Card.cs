@@ -6,18 +6,18 @@ using UnityEngine.UI;
 public abstract class Card : MonoBehaviour
 {
 
-    public static int _currentId;
-    public int cardId { get; private set; }
+    public static int CurrentId;
+    public int CardId { get; private set; }
 
-    private Image _cardImage;
-    private Button _cardButton;
-    private DraggableElement _dragComponent;
+    protected Image _cardImage;
+    protected Button _cardButton;
+    protected DraggableElement _dragComponent;
 
-    [SerializeField] private Sprite cardFront;
-    [SerializeField] private Sprite cardBack;
-    [SerializeField] private CardInfo description;
+    [SerializeField] protected Sprite cardFront;
+    [SerializeField] protected Sprite cardBack;
+    [SerializeField] protected CardInfo description;
 
-    private Team _team;
+    protected Team _team;
     public Team team
     {
         get { return _team; }
@@ -27,19 +27,28 @@ public abstract class Card : MonoBehaviour
 
             DraggableElement dragComponent = GetComponent<DraggableElement>();
 
-            dragComponent.draggableElementType = (team == Team.TEAM_WHITE)
-            ? DraggableElementType.DRAGGABLE_WHITE_CARD
-            : DraggableElementType.DRAGGABLE_RED_CARD;
+            switch(_team)
+            {
+                case Team.TEAM_WHITE:
+                    dragComponent.draggableElementType = DraggableElementType.DRAGGABLE_WHITE_CARD;
+                    break;
+                case Team.TEAM_RED:
+                    dragComponent.draggableElementType = DraggableElementType.DRAGGABLE_RED_CARD;
+                    break;
+                default:
+                    dragComponent.draggableElementType = DraggableElementType.DRAGGABLE_DEFAULT;
+                    break;
+            }
         }
     }
 
-    public bool hidden{ set{ _cardImage.sprite = value ? cardBack : cardFront; } }
-    public bool active
+    public bool Hidden{ set{ _cardImage.sprite = value ? cardBack : cardFront; } }
+    public bool Active
     {
         set
         {
             _cardButton.interactable = value;
-            _dragComponent.isDraggable = value;
+            _dragComponent.IsDraggable = value;
         }
     }
 
@@ -48,7 +57,7 @@ public abstract class Card : MonoBehaviour
     protected virtual void Awake()
     {
 
-        cardId = _currentId++;
+        CardId = CurrentId++;
 
         _cardImage = GetComponent<Image>();
         _cardButton = GetComponent<Button>();

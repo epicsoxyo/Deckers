@@ -49,7 +49,7 @@ public class DeckersGameManager : MonoBehaviour
 
     private void Start()
     {
-        Card._currentId = 0;
+        Card.CurrentId = 0;
         LocalGameManager.Instance.onGameStart += InstantiateCards;
     }
 
@@ -62,8 +62,8 @@ public class DeckersGameManager : MonoBehaviour
 
         for(int i = 0; i < 3; i++)
         {
-            CardsManager.Instance.DrawCard(Team.TEAM_WHITE);
-            CardsManager.Instance.DrawCard(Team.TEAM_RED);
+            CardsManager.Instance.DrawRandomCard(Team.TEAM_WHITE);
+            CardsManager.Instance.DrawRandomCard(Team.TEAM_RED);
         }
 
     }
@@ -131,18 +131,18 @@ public class DeckersGameManager : MonoBehaviour
 
         if(DeckersNetworkManager.isOnline)
         {
-            OnlineGameManager.Instance.Deckers_PlayCard(card.cardId);
+            OnlineGameManager.Instance.Deckers_PlayCard(card.CardId);
             return;
         }
 
-        LocalPlayCard(card.cardId);
+        LocalPlayCard(card.CardId);
 
     }
 
     public void LocalPlayCard(int cardId)
     {
 
-        Card card = CardsManager.Instance.cardsInPlay[cardId];
+        Card card = CardsManager.Instance.CardsInPlay[cardId];
 
         CardsManager.Instance.Consume(card);
 

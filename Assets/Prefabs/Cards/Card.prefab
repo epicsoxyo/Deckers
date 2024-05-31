@@ -147,4 +147,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   draggableElementType: 0
+  isDraggable: 0
   _dragAlpha: 0.6

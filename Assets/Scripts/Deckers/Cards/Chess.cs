@@ -18,14 +18,14 @@ public class Chess : Card
 
         _selectedPiece = null;
 
-        SelectionManager.Instance.UpdateActivePieces(team);
+        PieceSelectionManager.Instance.UpdateActivePieces(team);
         GamePiece.onClick += SelectPiece;
 
         while (_selectedPiece == null) { yield return null; }
 
         _selectedPiece.PromoteToBishop();
 
-        SelectionManager.Instance.UpdateActivePieces(Team.TEAM_NULL);
+        PieceSelectionManager.Instance.UpdateActivePieces(Team.TEAM_NULL);
         GamePiece.onClick -= SelectPiece;
 
         DeckersGameManager.Instance.EndTurn();

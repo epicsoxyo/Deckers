@@ -10,14 +10,14 @@ using UnityEngine.UI;
 public class Connect4 : Card
 {
 
-    private SelectionSlot currentSlot;
+    private SelectionSlot _currentSlot;
 
 
 
     private void Start()
     {
         Transform overlayTransform = OverlayManager.Instance.GetOverlay(Overlay.Connect4).transform;
-        currentSlot = overlayTransform.GetComponentsInChildren<SelectionSlot>()[0];
+        _currentSlot = overlayTransform.GetComponentsInChildren<SelectionSlot>()[0];
     }
 
 
@@ -67,9 +67,9 @@ public class Connect4 : Card
 
         while(!hasSelectedSlot)
         {
-            if(piece.transform.parent != currentSlot)
+            if(piece.transform.parent != _currentSlot)
             {
-                piece.transform.SetParent(currentSlot.transform);
+                piece.transform.SetParent(_currentSlot.transform);
             }
 
             if(Input.GetKeyDown(KeyCode.Mouse0))
@@ -114,7 +114,7 @@ public class Connect4 : Card
     {
         SelectionSlot slot = sender as SelectionSlot;
         if(slot == null) return;
-        currentSlot = slot;
+        _currentSlot = slot;
     }
 
     private void DropPiece(GamePiece piece)
@@ -122,7 +122,7 @@ public class Connect4 : Card
 
         for(int i = 1; i <= 8; i++)
         {
-            Transform currentSquare = Board.grid[(currentSlot.index, i)].transform;
+            Transform currentSquare = Board.grid[(_currentSlot.index, i)].transform;
             
             if(currentSquare.childCount > 0)
             {
@@ -131,10 +131,10 @@ public class Connect4 : Card
         }
 
         int posY = (team == Team.TEAM_WHITE) ?
-            (currentSlot.index % 2) + 1 :
-            7 + (currentSlot.index % 2);
+            (_currentSlot.index % 2) + 1 :
+            7 + (_currentSlot.index % 2);
 
-        piece.transform.SetParent(Board.grid[(currentSlot.index, posY)].transform);
+        piece.transform.SetParent(Board.grid[(_currentSlot.index, posY)].transform);
 
         piece.Capture(revert: true);
 
@@ -143,7 +143,7 @@ public class Connect4 : Card
     private void CheckForPromotion(GamePiece piece)
     {
         int promoteOddColumns = (team == Team.TEAM_RED) ? 1 : 0;
-        if((currentSlot.index % 2) == promoteOddColumns){ piece.Promote(); }
+        if((_currentSlot.index % 2) == promoteOddColumns){ piece.Promote(); }
     }
 
 }

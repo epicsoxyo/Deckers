@@ -9,7 +9,7 @@ public class DraggableElement : MonoBehaviour, IBeginDragHandler, IEndDragHandle
 {
 
     public DraggableElementType draggableElementType;
-    public bool isDraggable;
+    public bool IsDraggable = true;
 
     private RectTransform _rectTransform;
 
@@ -18,7 +18,7 @@ public class DraggableElement : MonoBehaviour, IBeginDragHandler, IEndDragHandle
     private float _defaultAlpha;
 
     private DropArea _mostRecentHover;
-    public Transform mostRecentSlot { get; private set; }
+    public Transform MostRecentSlot { get; private set; }
 
 
 
@@ -43,8 +43,8 @@ public class DraggableElement : MonoBehaviour, IBeginDragHandler, IEndDragHandle
 
     public void SetMostRecentSlot(Transform newParent)
     {
-        mostRecentSlot = newParent;
-        transform.SetParent(mostRecentSlot);
+        MostRecentSlot = newParent;
+        transform.SetParent(MostRecentSlot);
         LayoutRebuilder.ForceRebuildLayoutImmediate(newParent as RectTransform);
     }
 
@@ -60,7 +60,7 @@ public class DraggableElement : MonoBehaviour, IBeginDragHandler, IEndDragHandle
     public void OnBeginDrag(PointerEventData eventData)
     {
 
-        if(!isDraggable) return;
+        if(!IsDraggable) return;
 
         _canvasGroup.blocksRaycasts = false;
         _canvasGroup.alpha = _dragAlpha;
@@ -74,7 +74,7 @@ public class DraggableElement : MonoBehaviour, IBeginDragHandler, IEndDragHandle
     public void OnDrag(PointerEventData eventData)
     {
 
-        if(!isDraggable) return;
+        if(!IsDraggable) return;
 
         _rectTransform.position = new Vector3
         (
@@ -90,11 +90,11 @@ public class DraggableElement : MonoBehaviour, IBeginDragHandler, IEndDragHandle
     public void OnEndDrag(PointerEventData eventData)
     {
 
-        if(!isDraggable) return;
+        if(!IsDraggable) return;
 
         if(_mostRecentHover == null)
         {
-            SetMostRecentSlot(mostRecentSlot);
+            SetMostRecentSlot(MostRecentSlot);
         }
         else
         {

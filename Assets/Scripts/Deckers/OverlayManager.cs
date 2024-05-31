@@ -7,6 +7,7 @@ using UnityEngine.UI;
 public enum Overlay
 {
     Connect4,
+    Joker,
 
     // add overlays here
 }
@@ -21,6 +22,7 @@ public class OverlayManager : MonoBehaviour
     [SerializeField] private float transitionTime;
 
     [SerializeField] private CanvasGroup connect4Overlay;
+    [SerializeField] private CanvasGroup jokerOverlay;
 
 
 
@@ -42,43 +44,52 @@ public class OverlayManager : MonoBehaviour
         {
             case Overlay.Connect4:
                 return connect4Overlay;
+            case Overlay.Joker:
+                return jokerOverlay;
             default:
+            Debug.LogWarning(overlay + " was not assigned a canvas group and will return null.");
                 return null;
         }
     }
 
 
 
-    public void ToggleOverlayOn(Overlay overlay, bool isOn = true)
+    public CanvasGroup ToggleOverlayOn(Overlay overlay, bool isOn = true)
     {
-        StartCoroutine(OverlayTransition(overlay, isOn));
+
+        CanvasGroup canvasGroup = GetOverlay(overlay);
+        if(canvasGroup == null) { return null; }
+
+        StartCoroutine(OverlayTransition(canvasGroup, isOn));
+
+        return canvasGroup;
+
     }
 
 
 
-    private IEnumerator OverlayTransition(Overlay overlay, bool isOn)
+    private IEnumerator OverlayTransition(CanvasGroup overlayCanvasGroup, bool isOn)
     {
-
-        CanvasGroup canvasGroup = GetOverlay(overlay);
-        if(canvasGroup == null) yield break;
     
         ScreenManager.Instance.SwitchToScreen(UIScreen.SCREEN_EMPTY);
 
-        float a = canvasGroup.alpha;
+        float a = overlayCanvasGroup.alpha;
         float timeElapsed = (isOn ? a : 1 - a) * transitionTime;
         float startValue = a;
         float endValue = isOn ? 1f : 0f;
 
-        canvasGroup.alpha = endValue;
-        canvasGroup.blocksRaycasts = isOn;
-        canvasGroup.interactable = isOn;
+        overlayCanvasGroup.alpha = endValue;
+        overlayCanvasGroup.blocksRaycasts = isOn;
+        overlayCanvasGroup.interactable = isOn;
 
         while(timeElapsed < transitionTime)
         {
-            canvasGroup.alpha = Mathf.Lerp(startValue, endValue, timeElapsed / transitionTime);
+            overlayCanvasGroup.alpha = Mathf.Lerp(startValue, endValue, timeElapsed / transitionTime);
             timeElapsed += Time.deltaTime;
             yield return null;
         }
+
+        overlayCanvasGroup.alpha = endValue;
 
     }
 

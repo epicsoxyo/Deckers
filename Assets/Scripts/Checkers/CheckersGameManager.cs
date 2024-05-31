@@ -42,7 +42,7 @@ public class CheckersGameManager : MonoBehaviour
 
         CurrentPlayer = player;
 
-        SelectionManager.Instance.UpdateActivePieces(CurrentPlayer);
+        PieceSelectionManager.Instance.UpdateActivePieces(CurrentPlayer);
 
         if(DeckersNetworkManager.isOnline
         && player != OnlineGameManager.Instance.localTeam)
@@ -66,7 +66,7 @@ public class CheckersGameManager : MonoBehaviour
     private void OnPieceClick(object sender, EventArgs e)
     {
         GamePiece clickedPiece = sender as GamePiece;
-        SelectionManager.Instance.DisplayAvailableMoves(clickedPiece);
+        PieceSelectionManager.Instance.DisplayAvailableMoves(clickedPiece);
     }
 
 
@@ -77,7 +77,7 @@ public class CheckersGameManager : MonoBehaviour
         bool isOnline = DeckersNetworkManager.isOnline;
         OnlineGameManager networkedGame = OnlineGameManager.Instance;
 
-        GamePiece selectedPiece = SelectionManager.Instance.SelectedPiece;
+        GamePiece selectedPiece = PieceSelectionManager.Instance.SelectedPiece;
 
         // movement
 
@@ -107,7 +107,7 @@ public class CheckersGameManager : MonoBehaviour
 
         // capture
 
-        GamePiece capturedPiece = SelectionManager.Instance.AvailableMoves[destination];
+        GamePiece capturedPiece = PieceSelectionManager.Instance.AvailableMoves[destination];
         if(capturedPiece == null)
         {
             EndTurn();
@@ -131,9 +131,9 @@ public class CheckersGameManager : MonoBehaviour
             return;
         }
 
-        SelectionManager.Instance.UpdateActivePiece(selectedPiece);
+        PieceSelectionManager.Instance.UpdateActivePiece(selectedPiece);
         
-        if(!SelectionManager.Instance.DisplayAvailableMoves(selectedPiece, isCapturing: true))
+        if(!PieceSelectionManager.Instance.DisplayAvailableMoves(selectedPiece, isCapturing: true))
         {
             EndTurn();
         }
@@ -173,7 +173,7 @@ public class CheckersGameManager : MonoBehaviour
             LocalEndTurn();
         }
 
-        SelectionManager.Instance.ClearCurrentSelection();
+        PieceSelectionManager.Instance.ClearCurrentSelection();
 
         GridSquare.onGridClick -= OnGridClick;
         GamePiece.onClick -= OnPieceClick;

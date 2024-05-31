@@ -69,7 +69,7 @@ public class ScreenManager : MonoBehaviour
     public void SwitchToScreen(UIScreen screen)
     {
 
-        if(currentScreen == screen) return;
+        if(currentScreen == screen || currentScreen == UIScreen.SCREEN_GAME_OVER) return;
 
         foreach(ScreenElement element in screenElements_)
         {

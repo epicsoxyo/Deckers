@@ -174,7 +174,7 @@ public class OnlineGameManager : NetworkBehaviour
     [ClientRpc]
     private void Deckers_DrawCardClientRpc(byte team, int cardId)
     {
-        CardsManager.Instance.LocalDrawCard((Team)team, cardId);
+        CardsManager.Instance.LocalDrawRandomCard((Team)team, cardId);
     }
 
 

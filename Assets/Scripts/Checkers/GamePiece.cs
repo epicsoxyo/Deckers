@@ -80,9 +80,9 @@ public class GamePiece : MonoBehaviour
 
     private void Start()
     {
-        SelectionManager.Instance.onWhiteActive += OnWhiteActive;
-        SelectionManager.Instance.onRedActive += OnRedActive;
-        SelectionManager.Instance.onNullActive += OnNullActive;
+        PieceSelectionManager.Instance.onWhiteActive += OnWhiteActive;
+        PieceSelectionManager.Instance.onRedActive += OnRedActive;
+        PieceSelectionManager.Instance.onNullActive += OnNullActive;
         CheckersGameManager.Instance.onEndTurn += OnNullActive;
     }
 
@@ -139,6 +139,7 @@ public class GamePiece : MonoBehaviour
 
     public void Promote(bool demote = false)
     {
+        if(PieceType == GamePieceType.PIECE_BISHOP) { return; }
         PieceType = demote ? GamePieceType.PIECE_NORMAL : GamePieceType.PIECE_KING;
         _image.sprite = demote ? normalImage : kingImage;
     }
@@ -163,7 +164,6 @@ public class GamePiece : MonoBehaviour
         CaptureManager.Instance.Capture(this);
 
     }
-
 
 
 

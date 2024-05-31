@@ -25,13 +25,10 @@ public class CardsManager : MonoBehaviour
     [SerializeField] private Transform playArea;
     [SerializeField] private Transform discardArea;
 
-    private List<Transform> _redCardSlots = new List<Transform>();
-    private List<Transform> _whiteCardSlots = new List<Transform>();
+    public List<Transform> RedCardSlots = new List<Transform>();
+    public List<Transform> WhiteCardSlots = new List<Transform>();
 
-    [SerializeField] private List<GameObject> cardsPool = new List<GameObject>();
-    [SerializeField] private List<GameObject> jokerPool = new List<GameObject>();
-
-    public Dictionary<int, Card> cardsInPlay { get; private set; }
+    public Dictionary<int, Card> CardsInPlay { get; private set; }
 
 
 
@@ -46,7 +43,7 @@ public class CardsManager : MonoBehaviour
 
         Instance = this;
 
-        cardsInPlay = new Dictionary<int, Card>();
+        CardsInPlay = new Dictionary<int, Card>();
 
     }
 
@@ -70,12 +67,12 @@ public class CardsManager : MonoBehaviour
 
         foreach(Transform slot in upperCards)
         {
-            _redCardSlots.Add(slot);
+            RedCardSlots.Add(slot);
             slot.GetComponent<DropArea>().draggableElementType = DraggableElementType.DRAGGABLE_RED_CARD;
         }
         foreach(Transform slot in lowerCards)
         {
-            _whiteCardSlots.Add(slot);
+            WhiteCardSlots.Add(slot);
             slot.GetComponent<DropArea>().draggableElementType = DraggableElementType.DRAGGABLE_WHITE_CARD;
         }
 
@@ -88,17 +85,17 @@ public class CardsManager : MonoBehaviour
 
         foreach(Transform slot in lowerCards)
         {
-            _whiteCardSlots.Add(slot);
+            WhiteCardSlots.Add(slot);
             slot.GetComponent<DropArea>().draggableElementType = DraggableElementType.DRAGGABLE_WHITE_CARD;
         }
         for(int i = upperCards.childCount - 1; i >= 0; i--)
         {
             Transform slot = upperCards.GetChild(i);
-            _redCardSlots.Add(slot);
+            RedCardSlots.Add(slot);
             slot.SetParent(lowerCards);
             slot.GetComponent<DropArea>().draggableElementType = DraggableElementType.DRAGGABLE_RED_CARD;
         }
-        foreach(Transform slot in _whiteCardSlots)
+        foreach(Transform slot in WhiteCardSlots)
         {
             slot.SetParent(upperCards);
         }
@@ -107,11 +104,10 @@ public class CardsManager : MonoBehaviour
 
 
 
-    public void DrawCard(Team team)
+    public void DrawRandomCard(Team team)
     {
 
-        int maxIndex = cardsPool.Count >= 0 ? cardsPool.Count : jokerPool.Count;
-        int index = Random.Range(0, maxIndex);
+        int index = CardsDealer.Instance.GetRandomCardIndex();
 
         if(DeckersNetworkManager.isOnline)
         {
@@ -119,29 +115,49 @@ public class CardsManager : MonoBehaviour
             return;
         }
 
-        LocalDrawCard(team, index);
+        LocalDrawRandomCard(team, index);
 
     }
 
-    public void LocalDrawCard(Team team, int index)
+    public void LocalDrawRandomCard(Team team, int index)
     {
 
         Team localTeam = OnlineGameManager.Instance.localTeam;
 
-        List<Transform> slots = (team == Team.TEAM_WHITE) ? _whiteCardSlots : _redCardSlots;
+        List<Transform> slots = (team == Team.TEAM_WHITE) ? WhiteCardSlots : RedCardSlots;
 
         if(!TryGetEmptySlot(slots, out Transform slot)) return;
 
-        bool useJokerPool = (cardsPool.Count == 0);
-        GameObject cardGameObject = useJokerPool ? jokerPool[index] : cardsPool[index];
+        Card card = CardsDealer.Instance.GetNewCardFromIndex(index);
 
-        Card card = Instantiate(cardGameObject).GetComponent<Card>();
         card.team = team;
         card.transform.SetParent(slot);
 
-        cardsInPlay[card.cardId] = card;
+        CardsInPlay[card.CardId] = card;
 
-        if(!useJokerPool) cardsPool.RemoveAt(index);
+    }
+
+
+
+    public void LocalGiveCardToPlayer(Team team, ref Card card)
+    {
+
+        Debug.Log("Attempting to give card to player.");
+
+        Debug.Log($"Team: {team}; Card: {card}");
+
+        List<Transform> slots = (team == Team.TEAM_WHITE) ? WhiteCardSlots : RedCardSlots;
+
+        Debug.Log("Chose slots: " + slots);
+
+        if(!TryGetEmptySlot(slots, out Transform slot)) { return; }
+
+        Debug.Log("Found empty slot. Reparenting card to " + slot);
+
+        card.team = team;
+        card.transform.SetParent(slot);
+
+        CardsInPlay[card.CardId] = card;
 
     }
 
@@ -174,15 +190,15 @@ public class CardsManager : MonoBehaviour
         bool whiteIsActive = (activeGroup == CardsGroup.GROUP_BOTH) || (activeGroup == CardsGroup.GROUP_WHITE);
         bool redIsActive = (activeGroup == CardsGroup.GROUP_BOTH) || (activeGroup == CardsGroup.GROUP_RED);
 
-        foreach(Card card in cardsInPlay.Values)
+        foreach(Card card in CardsInPlay.Values)
         {
             if(hideGroup != CardsGroup.GROUP_NULL)
             {
-                card.hidden = (card.team == Team.TEAM_WHITE) ? whiteIsHidden : redIsHidden;
+                card.Hidden = (card.team == Team.TEAM_WHITE) ? whiteIsHidden : redIsHidden;
             }
             if(activeGroup != CardsGroup.GROUP_NULL)
             {
-                card.active = (card.team == Team.TEAM_WHITE) ? whiteIsActive : redIsActive;
+                card.Active = (card.team == Team.TEAM_WHITE) ? whiteIsActive : redIsActive;
             }
         }
 
@@ -200,8 +216,8 @@ public class CardsManager : MonoBehaviour
         Card activeCard =  playArea.GetChild(0).GetComponent<Card>();
 
         List<Transform> slots = (activeCard.team == Team.TEAM_WHITE)
-        ? _whiteCardSlots
-        : _redCardSlots;
+        ? WhiteCardSlots
+        : RedCardSlots;
 
         Transform slot;
 
@@ -220,11 +236,9 @@ public class CardsManager : MonoBehaviour
 
     public int Consume(Card card)
     {
-
         card.transform.SetParent(discardArea);
-        cardsInPlay.Remove(card.cardId);
-        return card.cardId;
-
+        CardsInPlay.Remove(card.CardId);
+        return card.CardId;
     }
 
 }

@@ -6,10 +6,10 @@ using UnityEngine;
 
 
 
-public class SelectionManager : MonoBehaviour
+public class PieceSelectionManager : MonoBehaviour
 {
 
-    public static SelectionManager Instance { get; private set; }
+    public static PieceSelectionManager Instance { get; private set; }
 
     public GamePiece SelectedPiece { get; private set; }
     public Dictionary<GridSquare, GamePiece> AvailableMoves = new Dictionary<GridSquare, GamePiece>();

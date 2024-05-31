@@ -13,11 +13,13 @@ GameObject:
   - component: {fileID: 1701895648258678381}
   - component: {fileID: 986404915913877586}
   - component: {fileID: 8807970158177451605}
+  - component: {fileID: 2260406139644944538}
   - component: {fileID: 5758718806104593113}
   - component: {fileID: 1324246933360428803}
   - component: {fileID: 7064651390612357504}
+  - component: {fileID: 520005408451199345}
   - component: {fileID: 3959621488940685898}
-  - component: {fileID: 2260406139644944538}
+  - component: {fileID: 5882530082108644121}
   m_Layer: 0
   m_Name: GameManagers
   m_TagString: Untagged
@@ -97,6 +99,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _skipTurnButton: {fileID: 0}
+--- !u!114 &2260406139644944538
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3898140072596453283}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bfeda86036bc8104ab4a6ed8cfe290ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &5758718806104593113
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -143,11 +157,25 @@ MonoBehaviour:
   lowerCards: {fileID: 0}
   playArea: {fileID: 0}
   discardArea: {fileID: 0}
+  RedCardSlots: []
+  WhiteCardSlots: []
+--- !u!114 &520005408451199345
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3898140072596453283}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1cd79c39de27ce40bbab20b79603fa0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
   cardsPool:
-  - {fileID: 9108307942799083491, guid: 34c021c107ee0614996510f75dca7f57, type: 3}
-  - {fileID: 9108307942799083491, guid: 34c021c107ee0614996510f75dca7f57, type: 3}
-  - {fileID: 9108307942799083491, guid: 34c021c107ee0614996510f75dca7f57, type: 3}
-  - {fileID: 9108307942799083491, guid: 34c021c107ee0614996510f75dca7f57, type: 3}
+  - {fileID: 756668195141343736, guid: 051257c5b80b93643ba30fe1d3527da7, type: 3}
+  - {fileID: 756668195141343736, guid: 051257c5b80b93643ba30fe1d3527da7, type: 3}
+  - {fileID: 151148845464480464, guid: f42f112aa9a260f4ca6cf1586238e181, type: 3}
+  - {fileID: 151148845464480464, guid: f42f112aa9a260f4ca6cf1586238e181, type: 3}
   - {fileID: 9108307942799083491, guid: 34c021c107ee0614996510f75dca7f57, type: 3}
   - {fileID: 9108307942799083491, guid: 34c021c107ee0614996510f75dca7f57, type: 3}
   jokerPool:
@@ -157,8 +185,8 @@ MonoBehaviour:
   - {fileID: 302094180693322805, guid: e8dec8e19c534e8409e0b0bceb5547d1, type: 3}
   - {fileID: 431751754918939324, guid: 61d36bb78080e894992286a46379c54c, type: 3}
   - {fileID: 4352551531924359097, guid: 283fdaa399f82b846b15c3461c9d5506, type: 3}
-  - {fileID: 7224464340952130152, guid: d444bba8acd7a4546a311d3126754928, type: 3}
   - {fileID: 151148845464480464, guid: f42f112aa9a260f4ca6cf1586238e181, type: 3}
+  - {fileID: 7224464340952130152, guid: d444bba8acd7a4546a311d3126754928, type: 3}
   - {fileID: 2337734537587990282, guid: 705935bdb4deee144816c9b3a624bb28, type: 3}
   - {fileID: 3978930906412439181, guid: bb50ceb7c034f8c4fb4776ac4283ffcb, type: 3}
   - {fileID: 9053400892077072978, guid: c444885c9f9167a4b984c788ada3a5a6, type: 3}
@@ -175,7 +203,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9deb9905ab2f41a49a41defb844eaf74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &2260406139644944538
+--- !u!114 &5882530082108644121
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -184,7 +212,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 3898140072596453283}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bfeda86036bc8104ab4a6ed8cfe290ed, type: 3}
+  m_Script: {fileID: 11500000, guid: b23f683786cd62d439b3b8053b552fdd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IsCapturing: 0
+  transitionTime: 0.2
+  connect4Overlay: {fileID: 0}
