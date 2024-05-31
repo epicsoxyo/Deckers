@@ -1,11 +1,7 @@
-using System.Collections.Generic;
-
 using UnityEngine;
 using UnityEngine.UI;
 
-using TMPro;
 using System.Threading.Tasks;
-using System;
 
 
 
@@ -103,7 +99,7 @@ public class MainMenu : MonoBehaviour
     public void OpenLobbyMenu()
     {
         menuStateMachine.SetTrigger("ToLobby");
-        lobbyMenu.SetLobbyInfoUI(LobbyManager.Instance.currentLobby);
+        lobbyMenu.SetLobbyInfoUI(LobbyManager.currentLobby);
     }
 
 
@@ -123,7 +119,7 @@ public class MainMenu : MonoBehaviour
 
     private void LocalGameStart()
     {
-        SceneLoader.Instance.LoadSceneLocally(GameScene.Game.ToString());
+        SceneLoader.Instance.LoadSceneLocally(GameScene.Game);
     }
 
 

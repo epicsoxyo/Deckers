@@ -5,6 +5,9 @@ using UnityEngine.UI;
 
 
 
+// TODO: if a donkey is created, keep a track of the donkey (and therefore its team attribute) in a variable.
+
+
 public class DeckersGameManager : MonoBehaviour
 {
 
@@ -46,6 +49,7 @@ public class DeckersGameManager : MonoBehaviour
 
     private void Start()
     {
+        Card._currentId = 0;
         LocalGameManager.Instance.onGameStart += InstantiateCards;
     }
 
@@ -123,7 +127,7 @@ public class DeckersGameManager : MonoBehaviour
 
         Card card = dropArea.GetChild(0).GetComponent<Card>();
 
-        if(!card.canBeUsed) return;
+        if(!card.IsPlayable()) return;
 
         if(DeckersNetworkManager.isOnline)
         {
@@ -186,7 +190,7 @@ public class DeckersGameManager : MonoBehaviour
     public void LocalEndTurn()
     {
 
-        CardsManager.Instance.EmptyPlayArea();
+        CardsManager.Instance.ClearPlayArea();
 
         UpdateCardsUI();
 

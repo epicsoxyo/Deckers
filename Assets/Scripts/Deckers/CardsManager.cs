@@ -190,7 +190,7 @@ public class CardsManager : MonoBehaviour
 
 
 
-    public void EmptyPlayArea()
+    public void ClearPlayArea()
     {
 
         playArea.GetComponent<CardDropArea>().ClearDescription();

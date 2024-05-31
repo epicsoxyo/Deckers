@@ -7,20 +7,6 @@ using UnityEngine;
 public class TheSun : Card
 {
 
-    protected override void Awake()
-    {
-        base.Awake();
-        _canBeUsed = false;
-    }
-
-    public override void OnPlay() {}
-
-    public override void OnDeckersTurnStart() {}
-
-    public override void OnCheckersTurnStart() {}
-
-    public override void OnTurnEnd() {}
-
-    public override void OnGameEnd() {}
+    public override bool IsPlayable() { return false;}
 
 }

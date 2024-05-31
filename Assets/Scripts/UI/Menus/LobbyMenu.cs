@@ -29,29 +29,33 @@ public class LobbyMenu : Menu
 
     private void Awake()
     {
-        startButton.enabled = false;
         _startButtonCanvasGroup = startButton.GetComponent<CanvasGroup>();
-        _startButtonCanvasGroup.alpha = 0f;
+        ActivateStartButton(false);
+    }
+
+
+
+    private void ActivateStartButton(bool isActive = true)
+    {
+        _startButtonCanvasGroup.alpha = isActive ? 1f : 0f;
+        _startButtonCanvasGroup.interactable = isActive;
+        _startButtonCanvasGroup.blocksRaycasts = isActive;
     }
 
 
 
     protected virtual void Start()
     {
-
         LobbyManager.Instance.onLobbyChanged += UpdateLobbyInfoUI;
-
         leaveLobbyButton.onClick.AddListener(async () => await LeaveLobby());
-
         startButton.onClick.AddListener(StartGame);
-
     }
 
 
 
     public void SetLobbyInfoUI(Lobby lobby)
     {
-        startButton.interactable = true;
+        ActivateStartButton();
         lobbyCode.SetText(lobby.LobbyCode);
         lobbyName.SetText(lobby.Name);
         UpdateLobbyInfoUI();
@@ -74,7 +78,7 @@ public class LobbyMenu : Menu
             return;
         }
 
-        Lobby lobby = lobbyManager.currentLobby;
+        Lobby lobby = LobbyManager.currentLobby;
 
         List<string> playerList = lobbyManager.GetPlayerNames();
         for(int i = 0; i < 2; i++)
@@ -83,9 +87,7 @@ public class LobbyMenu : Menu
             else playerNameFields[i].SetText(playerList[i]);
         }
 
-        bool showStartButton = LobbyManager.Instance.isLobbyHost;
-        startButton.GetComponent<CanvasGroup>().alpha = showStartButton ? 1f : 0f;
-        startButton.enabled = showStartButton;
+        ActivateStartButton(LobbyManager.isLobbyHost);
 
     }
 
@@ -113,8 +115,17 @@ public class LobbyMenu : Menu
 
     private async void StartGame()
     {
-        startButton.interactable = false;
-        startButton.interactable = !await LobbyManager.Instance.StartGame();
+
+        bool hasStartedGame = await LobbyManager.Instance.StartGame();
+        ActivateStartButton(!hasStartedGame); // reactivate if game start failed
+
+        if(hasStartedGame)
+        {
+            LobbyManager.Instance.onLobbyChanged -= UpdateLobbyInfoUI;
+            leaveLobbyButton.onClick.RemoveListener(async () => await LeaveLobby());
+            startButton.onClick.RemoveListener(StartGame);
+        }
+
     }
 
 }

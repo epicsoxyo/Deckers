@@ -88,10 +88,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 3409701488483196793, guid: 09ae86f72ff9a6448af3e1ef9c18bd9f, type: 3}
-      propertyPath: m_ConstrainProportionsScale
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 7371649175313897667, guid: 09ae86f72ff9a6448af3e1ef9c18bd9f, type: 3}
       propertyPath: m_Color.b
       value: 0.410948

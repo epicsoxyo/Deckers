@@ -1,10 +1,7 @@
-using System;
-
 using Unity.Netcode;
 
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using Random = UnityEngine.Random;
 
 
 
@@ -27,29 +24,21 @@ public class SceneLoader : MonoBehaviour
 
     private void Awake()
     {
-        
-        if(Instance != null)
-        {
-            Debug.LogWarning("Multiple SceneLoader instances detected!");
-            return;
-        }
-
         Instance = this;
-
     }
 
 
 
-    public void LoadSceneLocally(string sceneName)
+    public void LoadSceneLocally(GameScene sceneName)
     {
         SceneManager.LoadScene(sceneName.ToString());
     }
 
 
 
-    public void LoadSceneOverNetwork(string sceneName)
+    public void LoadSceneOverNetwork(GameScene sceneName)
     {
-        NetworkManager.Singleton.SceneManager.LoadScene(sceneName, LoadSceneMode.Single);
+        NetworkManager.Singleton.SceneManager.LoadScene(sceneName.ToString(), LoadSceneMode.Single);
     }
 
 }

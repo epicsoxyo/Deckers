@@ -10,6 +10,7 @@ public enum GamePieceType
 {
     PIECE_NORMAL,
     PIECE_KING,
+    PIECE_BISHOP,
 
     // add piece types here...
 }
@@ -20,25 +21,27 @@ public class GamePiece : MonoBehaviour
 {
 
     [Header("ID")]
-    private static int _currentId = 0;
-    public int id { get; private set; }
+    public static int CurrentId = 0;
+    public int Id { get; private set; }
 
     [Header("Piece Info")]
-    public Team player;
-    public GamePieceType pieceType;
-    public List<Move> movesSet
+    public Team Player;
+    public GamePieceType PieceType;
+    public List<Move> MovesSet
     {
         get
         {
-            switch(pieceType)
+            switch(PieceType)
             {
                 case GamePieceType.PIECE_NORMAL:
-                    return NormalMovesSet;
+                    return MonodirectionalMovesSet;
                 case GamePieceType.PIECE_KING:
-                    return KingMovesSet;
+                    return OmnidirectionalMovesSet;
+                case GamePieceType.PIECE_BISHOP:
+                    return OmnidirectionalMovesSet;
             }
 
-            Debug.LogError(pieceType.ToString() + " does not have an implemented moves set!");
+            Debug.LogError(PieceType.ToString() + " does not have an implemented moves set!");
             return new List<Move>();
         }
     }
@@ -46,19 +49,21 @@ public class GamePiece : MonoBehaviour
     [Header("Piece Components")]
     [SerializeField] private Sprite normalImage;
     [SerializeField] private Sprite kingImage;
+    [SerializeField] private Sprite bishopImage;
     [SerializeField] private Sprite capturedImage;
     private Image _image;
     private Button _gamePieceButton;
 
-    [Header("Piece Status")]
-    private bool _isCaptured;
+    public bool IsCaptured { get; private set; }
+
+    public static event EventHandler onClick;
 
 
 
     private void Awake()
     {
 
-        id = _currentId++;
+        Id = CurrentId++;
 
         _gamePieceButton = GetComponent<Button>();
         _gamePieceButton.onClick.AddListener(OnPieceClicked);
@@ -67,91 +72,93 @@ public class GamePiece : MonoBehaviour
         _image = GetComponent<Image>();
         _image.sprite = normalImage;
 
+        IsCaptured = false;
+
     }
 
 
 
     private void Start()
     {
-        
-        CheckersGameManager.Instance.onWhiteActive += OnWhiteBeginTurn;
-        CheckersGameManager.Instance.onRedActive += OnRedBeginTurn;
-        CheckersGameManager.Instance.onEndTurn += OnEndTurn;
-
+        SelectionManager.Instance.onWhiteActive += OnWhiteActive;
+        SelectionManager.Instance.onRedActive += OnRedActive;
+        SelectionManager.Instance.onNullActive += OnNullActive;
+        CheckersGameManager.Instance.onEndTurn += OnNullActive;
     }
 
 
 
-    private void OnWhiteBeginTurn(object sender, EventArgs e)
+    private void OnWhiteActive(object sender, EventArgs e)
     {
-        if(_isCaptured) return;
-        _gamePieceButton.interactable = (player == Team.TEAM_WHITE);
+        if(IsCaptured) return;
+        SetActive(Player == Team.TEAM_WHITE);
     }
 
 
 
-    private void OnRedBeginTurn(object sender, EventArgs e)
+    private void OnRedActive(object sender, EventArgs e)
     {
-        if(_isCaptured) return;
-        _gamePieceButton.interactable = (player == Team.TEAM_RED);
+        if(IsCaptured) return;
+        SetActive(Player == Team.TEAM_RED);
     }
 
 
 
-    private void OnEndTurn(object sender, EventArgs e)
+    private void OnNullActive(object sender, EventArgs e)
     {
-        if(_isCaptured) return;
-        _gamePieceButton.interactable = false;
+        if(IsCaptured) return;
+        SetActive(false);
     }
 
 
 
-    public void SetActive(bool active)
+    public void SetActive(bool active = true)
     {
         _gamePieceButton.interactable = active;
+        _image.raycastTarget = active;
     }
 
 
 
     private void OnPieceClicked()
     {
-        if(_isCaptured) return;
+
+        if(IsCaptured) return;
 
         if(DeckersNetworkManager.isOnline
-        && OnlineGameManager.Instance.localTeam != player)
+        && OnlineGameManager.Instance.localTeam != Player)
         {
             return;
         }
 
-        CheckersGameManager.Instance.OnPieceClicked(this);
+        onClick?.Invoke(this, EventArgs.Empty);
+
     }
 
 
 
     public void Promote(bool demote = false)
     {
-        pieceType = demote ? GamePieceType.PIECE_NORMAL : GamePieceType.PIECE_KING;
+        PieceType = demote ? GamePieceType.PIECE_NORMAL : GamePieceType.PIECE_KING;
         _image.sprite = demote ? normalImage : kingImage;
+    }
+
+    public void PromoteToBishop(bool demote = false)
+    {
+        PieceType = demote ? GamePieceType.PIECE_NORMAL : GamePieceType.PIECE_BISHOP;
+        _image.sprite = demote ? normalImage : bishopImage;
     }
 
 
 
-    public void Capture(bool revert = false, GridSquare gridSquare = null)
+    public void Capture(bool revert = false)
     {
 
-        if(!revert) _gamePieceButton.interactable = true;
-        _gamePieceButton.enabled = !revert;
+        IsCaptured = !revert;
+        _gamePieceButton.enabled = revert;
+        _image.sprite = revert ? (PieceType == GamePieceType.PIECE_KING ? kingImage : normalImage) : capturedImage;
 
-        _isCaptured = !revert;
-        _image.sprite = revert ? (pieceType == GamePieceType.PIECE_KING ? kingImage : normalImage) : capturedImage;
-
-        if(revert)
-        {
-            if(gridSquare == null || gridSquare.transform.childCount > 0) return;
-
-            transform.SetParent(gridSquare.transform);
-            return;
-        }
+        if(revert){ return; }
 
         CaptureManager.Instance.Capture(this);
 
@@ -159,15 +166,16 @@ public class GamePiece : MonoBehaviour
 
 
 
+
     // moves sets
 
-    public static readonly List<Move> NormalMovesSet = new List<Move>
+    public static readonly List<Move> MonodirectionalMovesSet = new List<Move>
     {
         new Move(-1, 1),    // top-left
         new Move(1, 1),     // top-right
     };
 
-    public static readonly List<Move> KingMovesSet = new List<Move>
+    public static readonly List<Move> OmnidirectionalMovesSet = new List<Move>
     {
         new Move(-1, 1),    // top-left
         new Move(1, 1),     // top-right

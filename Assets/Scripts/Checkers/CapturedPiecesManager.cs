@@ -54,10 +54,10 @@ public class CaptureManager : MonoBehaviour
         List<Transform> captureSlots;
         bool flipDials = (OnlineGameManager.Instance.localTeam == Team.TEAM_RED);
 
-        switch(capturedPiece.player)
+        switch(capturedPiece.Player)
         {
             case Team.TEAM_WHITE:
-                captureSlots = flipDials ? _upperCaptureSlots : _lowerCaptureSlots;
+                captureSlots = flipDials ? _lowerCaptureSlots : _upperCaptureSlots;
 
                 capturedPiece.transform.SetParent(captureSlots[whiteCapturedPieces]);
                 whiteCapturedPieces++;
@@ -71,7 +71,7 @@ public class CaptureManager : MonoBehaviour
                 break;
 
             case Team.TEAM_RED:
-                captureSlots = flipDials ? _lowerCaptureSlots : _upperCaptureSlots;
+                captureSlots = flipDials ? _upperCaptureSlots : _lowerCaptureSlots;
 
                 capturedPiece.transform.SetParent(captureSlots[redCapturedPieces]);
                 redCapturedPieces++;
@@ -106,21 +106,20 @@ public class CaptureManager : MonoBehaviour
 
 
 
-    public GamePiece Pop(Team team)
+    public GamePiece Pop(Team capturedPieceTeam)
     {
 
-        List<Transform> captureSlots = null;
         bool flipDials = (OnlineGameManager.Instance.localTeam == Team.TEAM_RED);
 
-        switch(team)
+        switch(capturedPieceTeam)
         {
             case Team.TEAM_WHITE:
-                captureSlots = flipDials ? _upperCaptureSlots : _lowerCaptureSlots;
+                List<Transform> captureSlots = flipDials ? _lowerCaptureSlots : _upperCaptureSlots;
                 if(captureSlots == null) return null;
                 return captureSlots[--whiteCapturedPieces].GetChild(0).GetComponent<GamePiece>();
 
             case Team.TEAM_RED:
-                captureSlots = flipDials ? _lowerCaptureSlots : _upperCaptureSlots;
+                captureSlots = flipDials ? _upperCaptureSlots : _lowerCaptureSlots;
                 if(captureSlots == null) return null;
                 return captureSlots[--redCapturedPieces].GetChild(0).GetComponent<GamePiece>();
         }

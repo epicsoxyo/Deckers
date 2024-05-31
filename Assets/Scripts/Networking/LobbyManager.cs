@@ -14,10 +14,10 @@ using Unity.Services.Lobbies.Models;
 public class LobbyManager : MonoBehaviour
 {
 
-    public static LobbyManager Instance;
+    public static LobbyManager Instance { get; private set; }
 
-    public Lobby currentLobby { get; private set; }
-    public bool isLobbyHost
+    public static Lobby currentLobby { get; private set; }
+    public static bool isLobbyHost
     {
         get { return currentLobby.HostId == SignInManager.Instance.localId; }
     }
@@ -27,18 +27,16 @@ public class LobbyManager : MonoBehaviour
 
 
 
-    private void Awake()
+    private async void Awake()
     {
-
         if(Instance != null)
         {
-            Debug.LogWarning("Multiple instances of LobbyManager detected!");
+            bool leftLobby = await LeaveLobby();
+            DestroyImmediate(gameObject);
             return;
         }
-
         Instance = this;
         DontDestroyOnLoad(gameObject);
-
     }
 
 
@@ -175,7 +173,7 @@ public class LobbyManager : MonoBehaviour
             string playerId = SignInManager.Instance.localId;
             string lobbyId = currentLobby.Id;
 
-            await lobbyEvents.UnsubscribeAsync();
+            if(lobbyEvents != null) { await lobbyEvents.UnsubscribeAsync(); }
 
             if(currentLobby.Players.Count <= 1)
             {
@@ -277,7 +275,6 @@ public class LobbyManager : MonoBehaviour
         if(currentLobby.Data["RelayCode"].Value != "0")
         {
             await RelayManager.Instance.JoinRelay(currentLobby.Data["RelayCode"].Value);
-            OnlineGameManager.Instance.StartGame();
         }
 
     }
@@ -366,7 +363,7 @@ public class LobbyManager : MonoBehaviour
 
             currentLobby = await Lobbies.Instance.UpdateLobbyAsync(currentLobby.Id, options);
 
-            OnlineGameManager.Instance.StartGame();
+            SceneLoader.Instance.LoadSceneOverNetwork(GameScene.Game);
 
             return true;
         }

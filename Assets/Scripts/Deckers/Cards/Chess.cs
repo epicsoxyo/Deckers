@@ -1,20 +1,42 @@
+using System;
 using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 
 
 
 public class Chess : Card
 {
 
-    public override void OnPlay() {}
+    private GamePiece _selectedPiece;
 
-    public override void OnDeckersTurnStart() {}
+    public override void OnPlay()
+    {
+        StartCoroutine("ChooseBishop");
+    }
 
-    public override void OnCheckersTurnStart() {}
+    private IEnumerator ChooseBishop()
+    {
 
-    public override void OnTurnEnd() {}
+        _selectedPiece = null;
 
-    public override void OnGameEnd() {}
+        SelectionManager.Instance.UpdateActivePieces(team);
+        GamePiece.onClick += SelectPiece;
+
+        while (_selectedPiece == null) { yield return null; }
+
+        _selectedPiece.PromoteToBishop();
+
+        SelectionManager.Instance.UpdateActivePieces(Team.TEAM_NULL);
+        GamePiece.onClick -= SelectPiece;
+
+        DeckersGameManager.Instance.EndTurn();
+
+    }
+
+    private void SelectPiece(object sender, EventArgs e)
+    {
+        GamePiece gamePiece = sender as GamePiece;
+        if(gamePiece == null) return;
+        _selectedPiece = gamePiece;
+    }
 
 }

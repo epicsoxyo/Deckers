@@ -68,21 +68,15 @@ public class LocalGameManager : MonoBehaviour
         CaptureManager.Instance.onWhiteWin += OnWhiteWin;
         CaptureManager.Instance.onRedWin += OnRedWin;
 
-        if(DeckersNetworkManager.isOnline){ OnlineGameManager.Instance.StartGame(); }
-        else{ StartGame(); }
-
     }
 
 
 
     public void StartGame()
     {
-
         _currentGameState = GameState.STATE_WHITE_CHECKERS;
         _waitingForAction = false;
-
         onGameStart?.Invoke(this, EventArgs.Empty);
-
     }
 
 
@@ -126,6 +120,8 @@ public class LocalGameManager : MonoBehaviour
         switch(_currentGameState)
         {
             case GameState.STATE_WAITING_FOR_PLAYERS:
+                if(DeckersNetworkManager.isOnline){ OnlineGameManager.Instance.StartGame(); }
+                else{ StartGame(); }
                 break;
 
             case GameState.STATE_START_OF_TURN:

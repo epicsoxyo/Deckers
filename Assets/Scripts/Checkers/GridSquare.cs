@@ -20,6 +20,8 @@ public class GridSquare : MonoBehaviour
     private Image _glow;
     private Button _gridButton;
 
+    public static event EventHandler onGridClick;
+
 
 
     private void Awake()
@@ -41,7 +43,7 @@ public class GridSquare : MonoBehaviour
     private void Start()
     {
         RectTransform rectTransform = transform as RectTransform;
-        // rectTransform.localScale = new Vector3(1, 1, 1);
+        rectTransform.localScale = new Vector3(1, 1, 1);
     }
 
 
@@ -56,7 +58,7 @@ public class GridSquare : MonoBehaviour
 
     private void OnGridSquareClick()
     {
-        CheckersGameManager.Instance.MoveSelectedPiece(this);
+        onGridClick?.Invoke(this, EventArgs.Empty);
     }
 
 }

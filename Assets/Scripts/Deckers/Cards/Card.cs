@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public abstract class Card : MonoBehaviour
 {
 
-    private static int _currentId;
+    public static int _currentId;
     public int cardId { get; private set; }
 
     private Image _cardImage;
@@ -33,9 +33,6 @@ public abstract class Card : MonoBehaviour
         }
     }
 
-    protected bool _canBeUsed;
-    public bool canBeUsed { get{ return _canBeUsed; } }
-
     public bool hidden{ set{ _cardImage.sprite = value ? cardBack : cardFront; } }
     public bool active
     {
@@ -50,11 +47,16 @@ public abstract class Card : MonoBehaviour
 
     protected virtual void Awake()
     {
+
         cardId = _currentId++;
+
         _cardImage = GetComponent<Image>();
         _cardButton = GetComponent<Button>();
         _dragComponent = GetComponent<DraggableElement>();
-        _canBeUsed = true;
+
+        RectTransform rectTransform = transform as RectTransform;
+        rectTransform.localScale = new Vector3(1, 1, 1);
+
     }
 
 
@@ -80,14 +82,16 @@ public abstract class Card : MonoBehaviour
 
 
 
-    public abstract void OnPlay();
+    public virtual bool IsPlayable() { return true; }
 
-    public abstract void OnDeckersTurnStart();
+    public virtual void OnPlay() { DeckersGameManager.Instance.EndTurn(); }
 
-    public abstract void OnCheckersTurnStart();
+    public virtual void OnDeckersTurnStart() {}
 
-    public abstract void OnTurnEnd();
+    public virtual void OnCheckersTurnStart() {}
 
-    public abstract void OnGameEnd();
+    public virtual void OnTurnEnd() {}
+
+    public virtual void OnGameEnd() {}
 
 }

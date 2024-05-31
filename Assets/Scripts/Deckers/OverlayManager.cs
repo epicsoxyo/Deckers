@@ -61,7 +61,7 @@ public class OverlayManager : MonoBehaviour
 
         CanvasGroup canvasGroup = GetOverlay(overlay);
         if(canvasGroup == null) yield break;
-
+    
         ScreenManager.Instance.SwitchToScreen(UIScreen.SCREEN_EMPTY);
 
         float a = canvasGroup.alpha;
@@ -69,16 +69,16 @@ public class OverlayManager : MonoBehaviour
         float startValue = a;
         float endValue = isOn ? 1f : 0f;
 
+        canvasGroup.alpha = endValue;
+        canvasGroup.blocksRaycasts = isOn;
+        canvasGroup.interactable = isOn;
+
         while(timeElapsed < transitionTime)
         {
             canvasGroup.alpha = Mathf.Lerp(startValue, endValue, timeElapsed / transitionTime);
             timeElapsed += Time.deltaTime;
             yield return null;
         }
-
-        canvasGroup.alpha = endValue;
-        canvasGroup.blocksRaycasts = isOn;
-        canvasGroup.interactable = isOn;
 
     }
 

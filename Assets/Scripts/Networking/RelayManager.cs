@@ -17,15 +17,7 @@ public class RelayManager : MonoBehaviour
 
     private void Awake()
     {
-        
-        if(Instance != null)
-        {
-            Debug.LogWarning("Multiple instances of RelayManager detected!");
-            return;
-        }
-
         Instance = this;
-
     }
 
 

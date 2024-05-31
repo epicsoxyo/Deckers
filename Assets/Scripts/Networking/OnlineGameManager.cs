@@ -59,12 +59,6 @@ public class OnlineGameManager : NetworkBehaviour
 
         Debug.Log("Connected!");
 
-        if(localTeam == Team.TEAM_RED)
-        {
-            Transform playableArea = CheckersGameManager.Instance.playableArea;
-            playableArea.GetComponent<GridLayoutGroup>().startCorner = GridLayoutGroup.Corner.LowerRight;
-        }
-
         LocalGameManager.Instance.StartGame();
 
     }
@@ -87,7 +81,7 @@ public class OnlineGameManager : NetworkBehaviour
     [ClientRpc]
     private void Checkers_MovePieceClientRpc(int pieceId, int x, int y)
     {
-        CheckersGameManager.Instance.MovePiece(pieceId, x, y);
+        CheckersGameManager.Instance.LocalMovePiece(pieceId, x, y);
     }
 
 
@@ -106,7 +100,7 @@ public class OnlineGameManager : NetworkBehaviour
     [ClientRpc]
     private void Checkers_PromotePieceClientRpc(int pieceId)
     {
-        CheckersGameManager.Instance.PromotePiece(pieceId);
+        CheckersGameManager.Instance.LocalPromotePiece(pieceId);
     }
 
 
@@ -125,7 +119,7 @@ public class OnlineGameManager : NetworkBehaviour
     [ClientRpc]
     private void Checkers_CapturePieceClientRpc(int pieceId)
     {
-        CheckersGameManager.Instance.CapturePiece(pieceId);
+        CheckersGameManager.Instance.LocalCapturePiece(pieceId);
     }
 
 

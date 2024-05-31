@@ -32,11 +32,6 @@ public class SignInManager : MonoBehaviour
     private async Task<bool> Initialise()
     {
 
-        if (Instance != null){
-            Debug.LogWarning("Multiple instances of SignInManager detected!");
-            return false; 
-        }
-
         Instance = this;
 
         await UnityServices.InitializeAsync();

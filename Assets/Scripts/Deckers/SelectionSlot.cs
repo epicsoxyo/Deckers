@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -9,6 +10,7 @@ public class SelectionSlot : MonoBehaviour, IPointerEnterHandler
 {
 
     public static event EventHandler onSlotPointerEnter;
+    public int index;
 
 
 
@@ -30,7 +32,7 @@ public class SelectionSlot : MonoBehaviour, IPointerEnterHandler
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        onSlotPointerEnter(this, EventArgs.Empty);
+        onSlotPointerEnter?.Invoke(this, EventArgs.Empty);
     }
 
 }

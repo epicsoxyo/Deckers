@@ -133,8 +133,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9533ebb50c7866c42aa4f69e7104ffd8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: 0
-  pieceType: 0
+  Player: 0
+  PieceType: 0
   normalImage: {fileID: 1109265213, guid: 8a5bc5550eeac654abb28060348f032e, type: 3}
   kingImage: {fileID: 1390627684, guid: 8a5bc5550eeac654abb28060348f032e, type: 3}
+  bishopImage: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
   capturedImage: {fileID: -1355965106, guid: 8a5bc5550eeac654abb28060348f032e, type: 3}

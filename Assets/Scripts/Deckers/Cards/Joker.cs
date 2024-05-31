@@ -1,5 +1,5 @@
 using System.Collections;
-using System.Collections.Generic;
+
 using UnityEngine;
 
 
@@ -15,7 +15,9 @@ public class Joker : Card
     private IEnumerator PlayJoker()
     {
 
-        // ScreenManager.Instance.SwitchToScreen(UIScreen.SCREEN_EMPTY);
+        // TODO: make new card invisible for the other player.
+        // TODO: allow player to select from three new cards instead of just getting a random one.
+        // TODO: hovering over each card opens its definition.
 
         CardsManager.Instance.DrawCard(team);
 
@@ -24,15 +26,5 @@ public class Joker : Card
         DeckersGameManager.Instance.EndTurn();
 
     }
-
-
-
-    public override void OnDeckersTurnStart() {}
-
-    public override void OnCheckersTurnStart() {}
-
-    public override void OnTurnEnd() {}
-
-    public override void OnGameEnd() {}
 
 }
