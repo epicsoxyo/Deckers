@@ -13,4 +13,5 @@ MonoBehaviour:
   m_Name: Joker
   m_EditorClassIdentifier: 
   cardName: Joker
-  cardDescription: On play, gain +1 random card.
+  cardDescription: On play, choose one card from three random cards to add to your
+    hand.

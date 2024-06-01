@@ -3,74 +3,79 @@ using UnityEngine.UI;
 
 
 
-public class GameDisconnectScreen : MonoBehaviour
+namespace Deckers.Network
 {
 
-    public static GameDisconnectScreen Instance { get; private set;}
-
-    private CanvasGroup _canvasGroup;
-    private Button _exitButton;
-
-
-
-    private void Awake()
+    public class GameDisconnectScreen : MonoBehaviour
     {
 
-        if(Instance != null)
+        public static GameDisconnectScreen Instance { get; private set;}
+
+        private CanvasGroup _canvasGroup;
+        private Button _exitButton;
+
+
+
+        private void Awake()
         {
-            Debug.LogWarning("Multiple instances of GameDisconnectScreen detected!");
-            return;
+
+            if(Instance != null)
+            {
+                Debug.LogWarning("Multiple instances of GameDisconnectScreen detected!");
+                return;
+            }
+
+            Instance = this;
+
+            _canvasGroup = GetComponent<CanvasGroup>();
+            ActivateDisconnectScreen(false);
+
+            _exitButton = GetComponentInChildren<Button>();
+            _exitButton.onClick.AddListener(OnExit);
+
         }
 
-        Instance = this;
-
-        _canvasGroup = GetComponent<CanvasGroup>();
-        ActivateDisconnectScreen(false);
-
-        _exitButton = GetComponentInChildren<Button>();
-        _exitButton.onClick.AddListener(OnExit);
-
-    }
 
 
-
-    private void Start()
-    {
-
-        if(DeckersNetworkManager.Instance == null)
+        private void Start()
         {
-            DestroyImmediate(gameObject);
-            return;
+
+            if(DeckersNetworkManager.Instance == null)
+            {
+                DestroyImmediate(gameObject);
+                return;
+            }
+
+            DeckersNetworkManager.Instance.OnClientDisconnectCallback += OnClientDisconnectCallback;
+
         }
 
-        DeckersNetworkManager.Instance.OnClientDisconnectCallback += OnClientDisconnectCallback;
-
-    }
 
 
 
-
-    private void OnClientDisconnectCallback(ulong obj)
-    {
-        ActivateDisconnectScreen();
-    }
-
-
-
-    public void ActivateDisconnectScreen(bool isActive = true)
-    {
-        _canvasGroup.alpha = isActive ? 1f : 0f;
-        _canvasGroup.interactable = isActive;
-        _canvasGroup.blocksRaycasts = isActive;
-    }
+        private void OnClientDisconnectCallback(ulong obj)
+        {
+            ActivateDisconnectScreen();
+        }
 
 
 
-    private void OnExit()
-    {
-        SceneLoader.Instance.LoadSceneLocally(GameScene.MainMenu);
-        _exitButton.onClick.RemoveListener(OnExit);
-        DeckersNetworkManager.Instance.OnClientDisconnectCallback -= OnClientDisconnectCallback;
+        public void ActivateDisconnectScreen(bool isActive = true)
+        {
+            _canvasGroup.alpha = isActive ? 1f : 0f;
+            _canvasGroup.interactable = isActive;
+            _canvasGroup.blocksRaycasts = isActive;
+        }
+
+
+
+        private void OnExit()
+        {
+            SceneLoader.Instance.LoadSceneLocally(GameScene.MainMenu);
+            _exitButton.onClick.RemoveListener(OnExit);
+            DeckersNetworkManager.Instance.OnClientDisconnectCallback -= OnClientDisconnectCallback;
+        }
+
     }
 
 }

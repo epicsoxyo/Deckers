@@ -1,6 +1,8 @@
 using UnityEngine;
 using UnityEngine.UI;
 
+using Deckers.Game;
+
 
 
 public abstract class Card : MonoBehaviour
@@ -63,8 +65,8 @@ public abstract class Card : MonoBehaviour
         _cardButton = GetComponent<Button>();
         _dragComponent = GetComponent<DraggableElement>();
 
-        RectTransform rectTransform = transform as RectTransform;
-        rectTransform.localScale = new Vector3(1, 1, 1);
+        // RectTransform rectTransform = transform as RectTransform;
+        // rectTransform.localScale = new Vector3(1, 1, 1);
 
     }
 
@@ -92,6 +94,8 @@ public abstract class Card : MonoBehaviour
 
 
     public virtual bool IsPlayable() { return true; }
+
+    public virtual void OnDraw() {}
 
     public virtual void OnPlay() { DeckersGameManager.Instance.EndTurn(); }
 

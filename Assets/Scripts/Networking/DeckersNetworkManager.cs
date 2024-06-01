@@ -1,25 +1,27 @@
-using System;
-
 using Unity.Netcode;
-using UnityEngine;
 
 
 
-public class DeckersNetworkManager : NetworkManager
+namespace Deckers.Network
 {
 
-    public static NetworkManager Instance
+    public class DeckersNetworkManager : NetworkManager
     {
-        get { return Singleton; }
-    }
 
-    public static bool isOnline
-    {
-        get
+        public static NetworkManager Instance
         {
-            if (Singleton == null) return false;
-            return Singleton.IsClient;
+            get { return Singleton; }
         }
+
+        public static bool isOnline
+        {
+            get
+            {
+                if (Singleton == null) return false;
+                return Singleton.IsClient;
+            }
+        }
+
     }
 
 }

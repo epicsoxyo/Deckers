@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+using Deckers.Game;
+using Deckers.Network;
+
 
 
 public class Board : MonoBehaviour
@@ -41,7 +44,7 @@ public class Board : MonoBehaviour
 
     private void Start()
     {
-        LocalGameManager.Instance.onGameStart += OnGameStart;
+        LocalGameManager.Instance.OnGameStart += OnGameStart;
     }
 
 
@@ -72,13 +75,12 @@ public class Board : MonoBehaviour
         {
             for(int x = 1; x <= 8; x++)
             {
-                GridSquare gridSquare = Instantiate(_gridSquarePrefab).GetComponent<GridSquare>();
+                GridSquare gridSquare = Instantiate(_gridSquarePrefab, playableArea, false)
+                    .GetComponent<GridSquare>();
+
                 grid[(x, y)] = gridSquare;
                 gridSquare.x = x;
                 gridSquare.y = y;
-
-                RectTransform gridSquareTransform = gridSquare.transform as RectTransform;
-                gridSquareTransform.SetParent(playableArea);
             }
         }
 
@@ -91,26 +93,26 @@ public class Board : MonoBehaviour
 
         for(int i = 0; i < 12; i++)
         {
-            GamePiece gamePiece = Instantiate(_whitePiecePrefab).GetComponent<GamePiece>();
-            gamePiece.Player = Team.TEAM_WHITE;
-            gamePieces[gamePiece.Id] = gamePiece;
-
             int x = (2 * i) % 8 - ((i > 3) && (i < 8) ? 1 : 0) + 2;
             int y = (i / 4) + 1;
 
-            gamePiece.transform.SetParent(grid[(x, y)].GetComponent<RectTransform>());
+            GamePiece gamePiece = Instantiate(_whitePiecePrefab, grid[(x, y)].transform, false)
+                .GetComponent<GamePiece>();
+
+            gamePiece.Player = Team.TEAM_WHITE;
+            gamePieces[gamePiece.Id] = gamePiece;
         }
 
         for(int i = 0; i < 12; i++)
         {
-            GamePiece gamePiece = Instantiate(_redPiecePrefab).GetComponent<GamePiece>();
-            gamePiece.Player = Team.TEAM_RED;
-            gamePieces[gamePiece.Id] = gamePiece;
-
             int x = (i * 2) % 8 - (!((i > 3) && (i < 8)) ? 1 : 0) + 2;
             int y = (i / 4) + 6;
 
-            gamePiece.transform.SetParent(grid[(x, y)].GetComponent<RectTransform>());
+            GamePiece gamePiece = Instantiate(_redPiecePrefab, grid[(x, y)].transform, false)
+                .GetComponent<GamePiece>();
+            
+            gamePiece.Player = Team.TEAM_RED;
+            gamePieces[gamePiece.Id] = gamePiece;
         }
 
     }

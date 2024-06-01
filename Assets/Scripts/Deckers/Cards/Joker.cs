@@ -1,7 +1,7 @@
-using System.Collections;
-
 using UnityEngine;
 using UnityEngine.UI;
+
+using Deckers.Game;
 
 
 
@@ -59,7 +59,6 @@ public class Joker : Card
     {
 
         // BUG: make new card invisible for the other player in online games.
-        // BUG: joker does not clear cards after choosing one.
 
         if(!_choiceSlot.GetChild(0).TryGetComponent(out Card selectedCard)){ return; }
 

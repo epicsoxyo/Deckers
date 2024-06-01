@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: d0992657c4137824788df018c7990780
+guid: 8e19eab44ff39da489285c2a543142c7
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -72,7 +72,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -123,13 +123,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: DeckersPieces_0
+      name: WhiteDeckersPieces_0
       rect:
         serializedVersion: 2
         x: 0
-        y: 0
-        width: 18
-        height: 16
+        y: 8
+        width: 8
+        height: 8
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -137,20 +137,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: a25ea63b9e674a44294bec84e626aeec
-      internalID: -665325481
+      spriteID: 33d38206745149f4da8e9e8c55f04d30
+      internalID: 386576716
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: DeckersPieces_1
+      name: WhiteDeckersPieces_1
       rect:
         serializedVersion: 2
-        x: 18
-        y: 0
-        width: 18
-        height: 16
+        x: 8
+        y: 8
+        width: 8
+        height: 8
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -158,8 +158,50 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 729dbb9c019151f469a861d791878d63
-      internalID: -134799684
+      spriteID: 3d49a3b8e826a4544b8306a62c0b1a8b
+      internalID: -1278264225
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WhiteDeckersPieces_2
+      rect:
+        serializedVersion: 2
+        x: 16
+        y: 8
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1cd87bb9c4143e343bbe8718aa2fc8cf
+      internalID: 1180596108
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WhiteDeckersPieces_3
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 00524e973b2e4f8419aab615fff42ea8
+      internalID: -1734809423
       vertices: []
       indices: 
       edges: []
@@ -175,8 +217,10 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      DeckersPieces_0: -665325481
-      DeckersPieces_1: -134799684
+      WhiteDeckersPieces_0: 386576716
+      WhiteDeckersPieces_1: -1278264225
+      WhiteDeckersPieces_2: 1180596108
+      WhiteDeckersPieces_3: -1734809423
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

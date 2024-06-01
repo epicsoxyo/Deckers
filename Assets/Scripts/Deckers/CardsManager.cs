@@ -2,6 +2,9 @@ using System.Collections.Generic;
 
 using UnityEngine;
 
+using Deckers.Game;
+using Deckers.Network;
+
 
 
 public enum CardsGroup
@@ -24,6 +27,9 @@ public class CardsManager : MonoBehaviour
     [SerializeField] private Transform lowerCards;
     [SerializeField] private Transform playArea;
     [SerializeField] private Transform discardArea;
+
+    public int WhiteCards { get; private set; }
+    public int RedCards { get; private set; }
 
     public List<Transform> RedCardSlots = new List<Transform>();
     public List<Transform> WhiteCardSlots = new List<Transform>();
@@ -51,7 +57,7 @@ public class CardsManager : MonoBehaviour
 
     private void Start()
     {
-        LocalGameManager.Instance.onGameStart += SetLocalSlots;
+        LocalGameManager.Instance.OnGameStart += SetLocalSlots;
     }
 
 
@@ -122,11 +128,28 @@ public class CardsManager : MonoBehaviour
     public void LocalDrawRandomCard(Team team, int index)
     {
 
-        Team localTeam = OnlineGameManager.Instance.localTeam;
+        List<Transform> slots;
 
-        List<Transform> slots = (team == Team.TEAM_WHITE) ? WhiteCardSlots : RedCardSlots;
+        switch(team)
+        {
+            case Team.TEAM_WHITE:
+                WhiteCards++;
+                slots = WhiteCardSlots;
+                break;
+            case Team.TEAM_RED:
+                RedCards++;
+                slots = RedCardSlots;
+                break;
+            default:
+                Debug.LogError("Attempted to draw card but team was not given!");
+                return;
+        }
 
-        if(!TryGetEmptySlot(slots, out Transform slot)) return;
+        if(!TryGetEmptySlot(slots, out Transform slot))
+        {
+            Debug.LogWarning("Attempted to draw card but there were no available slots!");
+            return;
+        }
 
         Card card = CardsDealer.Instance.GetNewCardFromIndex(index);
 
@@ -135,6 +158,8 @@ public class CardsManager : MonoBehaviour
 
         CardsInPlay[card.CardId] = card;
 
+        card.OnDraw();
+
     }
 
 
@@ -142,17 +167,24 @@ public class CardsManager : MonoBehaviour
     public void LocalGiveCardToPlayer(Team team, ref Card card)
     {
 
-        Debug.Log("Attempting to give card to player.");
+        List<Transform> slots;
 
-        Debug.Log($"Team: {team}; Card: {card}");
-
-        List<Transform> slots = (team == Team.TEAM_WHITE) ? WhiteCardSlots : RedCardSlots;
-
-        Debug.Log("Chose slots: " + slots);
+        switch(team)
+        {
+            case Team.TEAM_WHITE:
+                WhiteCards++;
+                slots = WhiteCardSlots;
+                break;
+            case Team.TEAM_RED:
+                RedCards++;
+                slots = RedCardSlots;
+                break;
+            default:
+                Debug.LogError("Attempted to give card to player but team was not given!");
+                return;
+        }
 
         if(!TryGetEmptySlot(slots, out Transform slot)) { return; }
-
-        Debug.Log("Found empty slot. Reparenting card to " + slot);
 
         card.team = team;
         card.transform.SetParent(slot);
@@ -236,9 +268,26 @@ public class CardsManager : MonoBehaviour
 
     public int Consume(Card card)
     {
+
         card.transform.SetParent(discardArea);
+
+        switch(card.team)
+        {
+            case Team.TEAM_WHITE:
+                WhiteCards--;
+                break;
+            case Team.TEAM_RED:
+                RedCards--;
+                break;
+            default:
+                Debug.LogWarning("Consumed card does not have an assigned team.");
+                break;
+        }
+
         CardsInPlay.Remove(card.CardId);
+
         return card.CardId;
+
     }
 
 }

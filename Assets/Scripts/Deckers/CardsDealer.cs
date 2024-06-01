@@ -12,6 +12,8 @@ public class CardsDealer : MonoBehaviour
     [SerializeField] private List<GameObject> cardsPool = new List<GameObject>();
     [SerializeField] private List<GameObject> jokerPool = new List<GameObject>();
 
+    [SerializeField] private Transform _spawnArea;
+
 
 
     private void Awake()
@@ -40,7 +42,7 @@ public class CardsDealer : MonoBehaviour
         bool useJokerPool = forceUseJokerPool || (cardsPool.Count == 0);
 
         GameObject cardGameObject = useJokerPool ? jokerPool[index] : cardsPool[index];
-        Card instancedCard = Instantiate(cardGameObject).GetComponent<Card>();
+        Card instancedCard = Instantiate(cardGameObject, _spawnArea, false).GetComponent<Card>();
 
         if(!useJokerPool) cardsPool.RemoveAt(index);
 

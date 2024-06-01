@@ -1,9 +1,11 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Reflection;
+
 using UnityEngine;
 using UnityEngine.UI;
+
+using Deckers.Game;
+
 
 
 
@@ -50,7 +52,7 @@ public class Connect4 : Card
     {
 
         OverlayManager.Instance.ToggleOverlayOn(Overlay.Connect4);
-        SelectionSlot.onSlotPointerEnter += UpdateSlot;
+        SelectionSlot.OnSlotPointerEnter += UpdateSlot;
 
         CheckForFlipOverlay();
 
@@ -75,7 +77,7 @@ public class Connect4 : Card
             if(Input.GetKeyDown(KeyCode.Mouse0))
             {
                 hasSelectedSlot = true;
-                SelectionSlot.onSlotPointerEnter -= UpdateSlot;
+                SelectionSlot.OnSlotPointerEnter -= UpdateSlot;
             }
             else { yield return null; }
         }
@@ -98,13 +100,21 @@ public class Connect4 : Card
 
         Transform overlay = OverlayManager.Instance.GetOverlay(Overlay.Connect4).transform;
 
-        bool isFlipped = DeckersNetworkManager.isOnline ?
-            OnlineGameManager.Instance.localTeam != team :
-            team == Team.TEAM_RED;
+        // TODO: network cards
+
+        // bool isFlipped = DeckersNetworkManager.isOnline ?
+        //     OnlineGameManager.Instance.localTeam != team :
+        //     team == Team.TEAM_RED;
+
+        bool isFlipped = team == Team.TEAM_RED;
         
         overlay.transform.rotation = isFlipped ?
             Quaternion.Euler(0, 0, 180) :
             Quaternion.Euler(0, 0, 0);
+        
+        overlay.transform.localPosition = isFlipped ?
+            new Vector3(0, 2, 0) :
+            new Vector3(0, 0, 0);
         
         overlay.GetChild(0).GetComponent<HorizontalLayoutGroup>().reverseArrangement = isFlipped;
 
@@ -122,7 +132,7 @@ public class Connect4 : Card
 
         for(int i = 1; i <= 8; i++)
         {
-            Transform currentSquare = Board.grid[(_currentSlot.index, i)].transform;
+            Transform currentSquare = Board.grid[(_currentSlot.Index, i)].transform;
             
             if(currentSquare.childCount > 0)
             {
@@ -131,10 +141,10 @@ public class Connect4 : Card
         }
 
         int posY = (team == Team.TEAM_WHITE) ?
-            (_currentSlot.index % 2) + 1 :
-            7 + (_currentSlot.index % 2);
+            (_currentSlot.Index % 2) + 1 :
+            7 + (_currentSlot.Index % 2);
 
-        piece.transform.SetParent(Board.grid[(_currentSlot.index, posY)].transform);
+        piece.transform.SetParent(Board.grid[(_currentSlot.Index, posY)].transform);
 
         piece.Capture(revert: true);
 
@@ -143,7 +153,7 @@ public class Connect4 : Card
     private void CheckForPromotion(GamePiece piece)
     {
         int promoteOddColumns = (team == Team.TEAM_RED) ? 1 : 0;
-        if((_currentSlot.index % 2) == promoteOddColumns){ piece.Promote(); }
+        if((_currentSlot.Index % 2) == promoteOddColumns){ piece.Promote(); }
     }
 
 }

@@ -8,6 +8,8 @@ using Unity.Services.Lobbies.Models;
 
 using TMPro;
 
+using Deckers.Network;
+
 
 
 public class LobbyMenu : Menu

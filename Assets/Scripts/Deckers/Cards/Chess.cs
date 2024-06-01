@@ -1,42 +1,38 @@
 using System;
-using System.Collections;
+
+using Deckers.Game;
 
 
 
 public class Chess : Card
 {
 
-    private GamePiece _selectedPiece;
-
     public override void OnPlay()
     {
-        StartCoroutine("ChooseBishop");
-    }
-
-    private IEnumerator ChooseBishop()
-    {
-
-        _selectedPiece = null;
-
         PieceSelectionManager.Instance.UpdateActivePieces(team);
         GamePiece.onClick += SelectPiece;
+    }
 
-        while (_selectedPiece == null) { yield return null; }
 
-        _selectedPiece.PromoteToBishop();
+
+    private void SelectPiece(object sender, EventArgs e)
+    {
+
+        GamePiece gamePiece = sender as GamePiece;
+
+        if((gamePiece == null)
+        || (gamePiece.PieceType == GamePieceType.PIECE_BISHOP))
+        {
+            return;
+        }
+
+        gamePiece.PromoteToBishop();
 
         PieceSelectionManager.Instance.UpdateActivePieces(Team.TEAM_NULL);
         GamePiece.onClick -= SelectPiece;
 
         DeckersGameManager.Instance.EndTurn();
 
-    }
-
-    private void SelectPiece(object sender, EventArgs e)
-    {
-        GamePiece gamePiece = sender as GamePiece;
-        if(gamePiece == null) return;
-        _selectedPiece = gamePiece;
     }
 
 }

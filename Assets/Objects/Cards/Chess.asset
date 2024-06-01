@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: Chess
   m_EditorClassIdentifier: 
   cardName: Chess
-  cardDescription: Choose one piece to go to church for one round to become a bishop.
+  cardDescription: Choose one piece to promote to a bishop.

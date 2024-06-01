@@ -1,200 +1,219 @@
 using System;
 using System.Collections.Generic;
+
 using UnityEngine;
 using UnityEngine.UI;
 
+using Deckers.Network;
 
 
-// TODO: if a donkey is created, keep a track of the donkey (and therefore its team attribute) in a variable.
 
-
-public class DeckersGameManager : MonoBehaviour
+namespace Deckers.Game
 {
 
-    public static DeckersGameManager Instance { get; private set; }
-
-    [Header("Play Area")]
-    [SerializeField] private Transform dropArea;
-    [SerializeField] private CanvasGroup playAreaCanvasGroup;
-    [SerializeField] private Button skipButton;
-    [SerializeField] private Button playButton;
-
-    // current turn
-    private Team _currentPlayer;
-
-    private List<Card> activeCards = new List<Card>();
-
-    // events
-    public event EventHandler onEndTurn;
-
-
-
-    private void Awake()
+    public class DeckersGameManager : MonoBehaviour
     {
 
-        if(Instance != null)
+        public static DeckersGameManager Instance { get; private set; }
+
+        [Header("Play Area")]
+        [SerializeField] private Transform dropArea;
+        [SerializeField] private CanvasGroup playAreaCanvasGroup;
+        [SerializeField] private Button skipButton;
+        [SerializeField] private Button playButton;
+
+        // current turn
+        private Team _currentPlayer;
+
+        private List<Card> _activeCards = new List<Card>();
+
+        // events
+        public event EventHandler OnEndTurn;
+
+
+
+        private void Awake()
         {
-            Debug.LogWarning("Multiple instances of DeckersGameManager detected!");
-            return;
+
+            if(Instance != null)
+            {
+                Debug.LogWarning("Multiple instances of DeckersGameManager detected!");
+                return;
+            }
+
+            Instance = this;
+
+            skipButton.onClick.AddListener(EndTurn);
+            playButton.onClick.AddListener(PlayCardInDropArea);
+
         }
 
-        Instance = this;
-
-        skipButton.onClick.AddListener(EndTurn);
-        playButton.onClick.AddListener(PlayCard);
-
-    }
 
 
-
-    private void Start()
-    {
-        Card.CurrentId = 0;
-        LocalGameManager.Instance.onGameStart += InstantiateCards;
-    }
-
-
-
-    private void InstantiateCards(object sender, EventArgs e)
-    {
-
-        if(DeckersNetworkManager.isOnline && !DeckersNetworkManager.Instance.IsHost) return;
-
-        for(int i = 0; i < 3; i++)
+        private void Start()
         {
-            CardsManager.Instance.DrawRandomCard(Team.TEAM_WHITE);
-            CardsManager.Instance.DrawRandomCard(Team.TEAM_RED);
+            Card.CurrentId = 0;
+            LocalGameManager.Instance.OnGameStart += InstantiateCards;
         }
 
-    }
 
 
-
-    public void BeginTurn(Team player)
-    {
-
-        _currentPlayer = player;
-
-        UpdateCardsUI();
-
-        ScreenManager.Instance.SwitchToScreen(UIScreen.SCREEN_DECKERS);
-
-    }
-
-
-
-    private void UpdateCardsUI()
-    {
-
-        Team localTeam = OnlineGameManager.Instance.localTeam;
-
-        switch(_currentPlayer)
+        private void InstantiateCards(object sender, EventArgs e)
         {
-            case Team.TEAM_WHITE:
-                if(localTeam == Team.TEAM_RED)
-                {
-                    CardsManager.Instance.SelectCardGroup(hideGroup: CardsGroup.GROUP_WHITE, activeGroup: CardsGroup.GROUP_NONE);
+
+            if(DeckersNetworkManager.isOnline && !DeckersNetworkManager.Instance.IsHost) return;
+
+            for(int i = 0; i < 3; i++)
+            {
+                CardsManager.Instance.DrawRandomCard(Team.TEAM_WHITE);
+                CardsManager.Instance.DrawRandomCard(Team.TEAM_RED);
+            }
+
+        }
+
+
+
+        public void BeginTurn(Team player)
+        {
+
+            _currentPlayer = player;
+
+            UpdateCardsUI();
+
+            ScreenManager.Instance.SwitchToScreen(UIScreen.SCREEN_DECKERS);
+
+        }
+
+
+
+        private void UpdateCardsUI()
+        {
+
+            Team localTeam = OnlineGameManager.Instance.localTeam;
+
+            switch(_currentPlayer)
+            {
+                case Team.TEAM_WHITE:
+                    if(localTeam == Team.TEAM_RED)
+                    {
+                        CardsManager.Instance.SelectCardGroup(hideGroup: CardsGroup.GROUP_WHITE, activeGroup: CardsGroup.GROUP_NONE);
+                        break;
+                    }
+                    CardsManager.Instance.SelectCardGroup(hideGroup: CardsGroup.GROUP_RED, activeGroup: CardsGroup.GROUP_WHITE);
                     break;
-                }
-                CardsManager.Instance.SelectCardGroup(hideGroup: CardsGroup.GROUP_RED, activeGroup: CardsGroup.GROUP_WHITE);
-                break;
-            case Team.TEAM_RED:
-                if(localTeam == Team.TEAM_WHITE)
-                {
-                    CardsManager.Instance.SelectCardGroup(hideGroup: CardsGroup.GROUP_RED, activeGroup: CardsGroup.GROUP_NONE);
+                case Team.TEAM_RED:
+                    if(localTeam == Team.TEAM_WHITE)
+                    {
+                        CardsManager.Instance.SelectCardGroup(hideGroup: CardsGroup.GROUP_RED, activeGroup: CardsGroup.GROUP_NONE);
+                        break;
+                    }
+                    CardsManager.Instance.SelectCardGroup(hideGroup: CardsGroup.GROUP_WHITE, activeGroup: CardsGroup.GROUP_RED);
                     break;
-                }
-                CardsManager.Instance.SelectCardGroup(hideGroup: CardsGroup.GROUP_WHITE, activeGroup: CardsGroup.GROUP_RED);
-                break;
+            }
+
+            if(!DeckersNetworkManager.isOnline) return;
+
+            bool showPlayArea = (OnlineGameManager.Instance.localTeam == _currentPlayer);
+
+            playAreaCanvasGroup.alpha = showPlayArea ? 1 : 0;
+            playAreaCanvasGroup.blocksRaycasts = showPlayArea;
+            playAreaCanvasGroup.interactable = showPlayArea;
+
         }
 
-        if(!DeckersNetworkManager.isOnline) return;
-
-        bool showPlayArea = (OnlineGameManager.Instance.localTeam == _currentPlayer);
-
-        playAreaCanvasGroup.alpha = showPlayArea ? 1 : 0;
-        playAreaCanvasGroup.blocksRaycasts = showPlayArea;
-        playAreaCanvasGroup.interactable = showPlayArea;
-
-    }
 
 
-
-    private void PlayCard()
-    {
-
-        if(dropArea.childCount == 0) return;
-
-        Card card = dropArea.GetChild(0).GetComponent<Card>();
-
-        if(!card.IsPlayable()) return;
-
-        if(DeckersNetworkManager.isOnline)
+        private void PlayCardInDropArea()
         {
-            OnlineGameManager.Instance.Deckers_PlayCard(card.CardId);
-            return;
+
+            if(dropArea.childCount == 0) return;
+
+            Card card = dropArea.GetChild(0).GetComponent<Card>();
+
+            if(!card.IsPlayable())
+            {
+                // PRIORITY: add card error text
+                Debug.Log("Card is unplayable.");
+                return;
+            }
+
+            PlayCard(card);
+
         }
 
-        LocalPlayCard(card.CardId);
-
-    }
-
-    public void LocalPlayCard(int cardId)
-    {
-
-        Card card = CardsManager.Instance.CardsInPlay[cardId];
-
-        CardsManager.Instance.Consume(card);
-
-        activeCards.Add(card);
-        card.OnPlay();
-
-    }
-
-
-
-    public void TriggerAbilities(GameState gameState)
-    {
-
-        switch(gameState)
+        public void PlayCard(Card card)
         {
-            case GameState.STATE_START_OF_TURN:
-                break;
-            case GameState.STATE_MIDDLE_OF_TURN:
-                break;
-            case GameState.STATE_END_OF_TURN:
-                break;
-            case GameState.STATE_END_OF_GAME:
-                break;
+
+            Debug.Log("Playing card " + card.name);
+
+            if(DeckersNetworkManager.isOnline)
+            {
+                OnlineGameManager.Instance.Deckers_PlayCard(card.CardId);
+                return;
+            }
+
+            LocalPlayCard(card.CardId);
+
         }
 
-        onEndTurn?.Invoke(this, EventArgs.Empty);
-
-    }
-
-
-
-    public void EndTurn()
-    {
-
-        if(DeckersNetworkManager.isOnline)
+        public void LocalPlayCard(int cardId)
         {
-            OnlineGameManager.Instance.Deckers_EndTurn();
-            return;
+
+            Card card = CardsManager.Instance.CardsInPlay[cardId];
+
+            if(card.IsPlayable()){ CardsManager.Instance.Consume(card); }
+
+            _activeCards.Add(card);
+            card.OnPlay();
+
         }
 
-        LocalEndTurn();
 
-    }
 
-    public void LocalEndTurn()
-    {
+        public void TriggerAbilities(GameState gameState)
+        {
 
-        CardsManager.Instance.ClearPlayArea();
+            switch(gameState)
+            {
+                case GameState.STATE_START_OF_TURN:
+                    break;
+                case GameState.STATE_MIDDLE_OF_TURN:
+                    break;
+                case GameState.STATE_END_OF_TURN:
+                    break;
+                case GameState.STATE_END_OF_GAME:
+                    break;
+            }
 
-        UpdateCardsUI();
+            OnEndTurn?.Invoke(this, EventArgs.Empty);
 
-        onEndTurn?.Invoke(this, EventArgs.Empty);
+        }
+
+
+
+        public void EndTurn()
+        {
+
+            if(DeckersNetworkManager.isOnline)
+            {
+                OnlineGameManager.Instance.Deckers_EndTurn();
+                return;
+            }
+
+            LocalEndTurn();
+
+        }
+
+        public void LocalEndTurn()
+        {
+
+            CardsManager.Instance.ClearPlayArea();
+
+            UpdateCardsUI();
+
+            OnEndTurn?.Invoke(this, EventArgs.Empty);
+
+        }
 
     }
 

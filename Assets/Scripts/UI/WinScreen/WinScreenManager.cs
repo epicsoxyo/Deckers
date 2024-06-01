@@ -1,8 +1,13 @@
 using System;
-using TMPro;
+
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+
+using TMPro;
+
+using Deckers.Game;
+using Deckers.Network;
 
 
 
@@ -36,8 +41,8 @@ public class WinScreenManager : MonoBehaviour
 
     private void Start()
     {
-        LocalGameManager.Instance.onWhiteWin += OnWhiteWin;
-        LocalGameManager.Instance.onRedWin += OnRedWin;
+        LocalGameManager.Instance.OnWhiteWin += OnWhiteWin;
+        LocalGameManager.Instance.OnRedWin += OnRedWin;
     }
 
 

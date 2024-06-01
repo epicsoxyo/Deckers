@@ -13,4 +13,5 @@ MonoBehaviour:
   m_Name: GoToJail
   m_EditorClassIdentifier: 
   cardName: Go to Jail
-  cardDescription: On play, capture one piece of your choosing.
+  cardDescription: On play, send one piece to jail. They must pass "GO!" in order
+    to reclaim that piece.

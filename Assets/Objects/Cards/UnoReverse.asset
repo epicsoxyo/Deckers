@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: UnoReverse
   m_EditorClassIdentifier: 
   cardName: Uno Reverse
-  cardDescription: 'Choose one piece to replace with '
+  cardDescription: Reverse your opponent's last move.

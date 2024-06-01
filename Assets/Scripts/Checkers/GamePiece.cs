@@ -1,8 +1,11 @@
 using System;
 using System.Collections.Generic;
-using Unity.Services.Lobbies.Models;
+
 using UnityEngine;
 using UnityEngine.UI;
+
+using Deckers.Game;
+using Deckers.Network;
 
 
 
@@ -53,8 +56,10 @@ public class GamePiece : MonoBehaviour
     [SerializeField] private Sprite capturedImage;
     private Image _image;
     private Button _gamePieceButton;
+    private GamePieceOverlayManager _overlayManager;
 
     public bool IsCaptured { get; private set; }
+    public bool IsProtected { get; private set; }
 
     public static event EventHandler onClick;
 
@@ -72,7 +77,10 @@ public class GamePiece : MonoBehaviour
         _image = GetComponent<Image>();
         _image.sprite = normalImage;
 
+        _overlayManager = GetComponentInChildren<GamePieceOverlayManager>();
+
         IsCaptured = false;
+        IsProtected = false;
 
     }
 
@@ -152,12 +160,42 @@ public class GamePiece : MonoBehaviour
 
 
 
+    public void Protect(GamePieceOverlay overlay)
+    {
+        IsProtected = true;
+        _overlayManager.ToggleOverlayOn(overlay);
+    }
+
+    public void Unprotect()
+    {
+        IsProtected = false;
+        _overlayManager.ToggleOverlayOff();
+    }
+
+
+
     public void Capture(bool revert = false)
     {
 
         IsCaptured = !revert;
         _gamePieceButton.enabled = revert;
-        _image.sprite = revert ? (PieceType == GamePieceType.PIECE_KING ? kingImage : normalImage) : capturedImage;
+
+        if(revert)
+        {
+            switch(PieceType)
+            {
+                case GamePieceType.PIECE_NORMAL:
+                    _image.sprite = normalImage;
+                    break;
+                case GamePieceType.PIECE_KING:
+                    _image.sprite = kingImage;
+                    break;
+            }
+        }
+        else if(PieceType != GamePieceType.PIECE_BISHOP)
+        {
+            _image.sprite = capturedImage;
+        }
 
         if(revert){ return; }
 

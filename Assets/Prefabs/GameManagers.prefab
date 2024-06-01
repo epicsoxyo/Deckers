@@ -20,6 +20,7 @@ GameObject:
   - component: {fileID: 520005408451199345}
   - component: {fileID: 3959621488940685898}
   - component: {fileID: 5882530082108644121}
+  - component: {fileID: 8745168876085747416}
   m_Layer: 0
   m_Name: GameManagers
   m_TagString: Untagged
@@ -175,9 +176,9 @@ MonoBehaviour:
   - {fileID: 756668195141343736, guid: 051257c5b80b93643ba30fe1d3527da7, type: 3}
   - {fileID: 756668195141343736, guid: 051257c5b80b93643ba30fe1d3527da7, type: 3}
   - {fileID: 151148845464480464, guid: f42f112aa9a260f4ca6cf1586238e181, type: 3}
-  - {fileID: 151148845464480464, guid: f42f112aa9a260f4ca6cf1586238e181, type: 3}
   - {fileID: 9108307942799083491, guid: 34c021c107ee0614996510f75dca7f57, type: 3}
-  - {fileID: 9108307942799083491, guid: 34c021c107ee0614996510f75dca7f57, type: 3}
+  - {fileID: 4352551531924359097, guid: 283fdaa399f82b846b15c3461c9d5506, type: 3}
+  - {fileID: 916747126045715590, guid: 6824ba6b04e194b489d3b6547069c0e4, type: 3}
   jokerPool:
   - {fileID: 756668195141343736, guid: 051257c5b80b93643ba30fe1d3527da7, type: 3}
   - {fileID: 1746188196331229167, guid: 40fe8dd1359ff9b4881193e8ff7ba77d, type: 3}
@@ -191,6 +192,7 @@ MonoBehaviour:
   - {fileID: 3978930906412439181, guid: bb50ceb7c034f8c4fb4776ac4283ffcb, type: 3}
   - {fileID: 9053400892077072978, guid: c444885c9f9167a4b984c788ada3a5a6, type: 3}
   - {fileID: 5189664913613113324, guid: cd39a463b0642a74ea338c0ab5cf1286, type: 3}
+  _spawnArea: {fileID: 0}
 --- !u!114 &3959621488940685898
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -217,3 +219,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   transitionTime: 0.2
   connect4Overlay: {fileID: 0}
+  jokerOverlay: {fileID: 0}
+--- !u!114 &8745168876085747416
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3898140072596453283}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a9f94bda80a748444a7fb119b8111a2b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

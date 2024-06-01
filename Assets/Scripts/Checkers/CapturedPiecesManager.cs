@@ -3,6 +3,8 @@ using System.Collections.Generic;
 
 using UnityEngine;
 
+using Deckers.Game;
+
 
 
 public class CaptureManager : MonoBehaviour

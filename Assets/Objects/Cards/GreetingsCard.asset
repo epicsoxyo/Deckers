@@ -14,4 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardName: Greetings Card
   cardDescription: Choose one piece to throw a birthday party for. For the current
-    round, it is forbidden to capture that piece.
+    round, it is forbidden to capture that piece. It is, however, possible to capture
+    that piece using a card.

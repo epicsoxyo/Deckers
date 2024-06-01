@@ -3,14 +3,26 @@ using System.Collections.Generic;
 
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 
 
-public class SelectionSlot : MonoBehaviour, IPointerEnterHandler
+public class SelectionSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
 
-    public static event EventHandler onSlotPointerEnter;
-    public int index;
+    public static event EventHandler OnSlotPointerEnter;
+    public int Index;
+
+    private Image _image;
+    [SerializeField] private Sprite _selectedSprite;
+    [SerializeField] private Sprite _deselectedSprite;
+
+
+
+    private void Awake()
+    {
+        _image = GetComponent<Image>();
+    }
 
 
 
@@ -32,7 +44,15 @@ public class SelectionSlot : MonoBehaviour, IPointerEnterHandler
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        onSlotPointerEnter?.Invoke(this, EventArgs.Empty);
+        _image.sprite = _selectedSprite;
+        OnSlotPointerEnter?.Invoke(this, EventArgs.Empty);
+    }
+
+
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        _image.sprite = _deselectedSprite;
     }
 
 }

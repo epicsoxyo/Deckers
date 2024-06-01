@@ -1,8 +1,9 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 
 using UnityEngine;
+
+using Deckers.Game;
 
 
 
@@ -146,7 +147,7 @@ public class PieceSelectionManager : MonoBehaviour
                 // piece occupying square
                 GamePiece occupyingPiece = nextSquare.transform.GetChild(0).GetComponent<GamePiece>();
 
-                if(occupyingPiece.Player != SelectedPiece.Player)
+                if((occupyingPiece.Player != SelectedPiece.Player) && !occupyingPiece.IsProtected)
                 {
                     nextSquare.DisplayAsAvailableMove();
                     AvailableMoves[nextSquare] = occupyingPiece;
@@ -181,14 +182,14 @@ public class PieceSelectionManager : MonoBehaviour
 
             GamePiece occupyingPiece = nextSquare.transform.GetChild(0).GetComponent<GamePiece>();
 
-            if(occupyingPiece.Player == SelectedPiece.Player) continue; // cannot jump over own pieces
-            
-            if(!Board.TryGetNextSquare(move, nextSquare, out GridSquare skippedSquare))
+            if((occupyingPiece.Player == SelectedPiece.Player) || occupyingPiece.IsProtected)
             {
                 continue;
             }
 
-            if(skippedSquare.transform.childCount == 0) // nothing occupying square past occupied square
+
+            if(Board.TryGetNextSquare(move, nextSquare, out GridSquare skippedSquare)
+            && skippedSquare.transform.childCount == 0)
             {
                 skippedSquare.DisplayAsAvailableMove();
                 AvailableMoves[skippedSquare] = occupyingPiece;
@@ -207,5 +208,7 @@ public class PieceSelectionManager : MonoBehaviour
         }
         AvailableMoves.Clear();
     }
+
+    
 
 }
