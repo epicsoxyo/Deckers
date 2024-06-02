@@ -41,88 +41,77 @@ public class WinScreenManager : MonoBehaviour
 
     private void Start()
     {
-        LocalGameManager.Instance.OnWhiteWin += OnWhiteWin;
-        LocalGameManager.Instance.OnRedWin += OnRedWin;
+        LocalGameManager.Instance.OnWin += OnWin;
     }
 
 
 
-    private void OnWhiteWin(object sender, EventArgs e)
+    private void OnWin(Team winningTeam)
     {
 
-        whiteWinText.enabled = true;
-        redWinText.enabled = false;
+        whiteWinText.enabled = (winningTeam == Team.TEAM_WHITE);
+        redWinText.enabled = (winningTeam == Team.TEAM_RED);
 
         ScreenManager.Instance.SwitchToScreen(UIScreen.SCREEN_GAME_OVER);
 
-        if(!DeckersNetworkManager.isOnline)
+        if (!DeckersNetworkManager.isOnline)
         {
+            SetOfflineUI(winningTeam);
+            return;
+        }
 
-            rematchButton.interactable = true;
-            quitButton.interactable = true;
-            waitForHostText.enabled = false;
+        SetOnlineUI(winningTeam);
 
+    }
+
+    private void SetOfflineUI(Team winningTeam)
+    {
+        rematchButton.interactable = true;
+        quitButton.interactable = true;
+        waitForHostText.enabled = false;
+
+        if (winningTeam == Team.TEAM_WHITE)
+        {
             whiteWinText.SetText("White wins!");
-
-            return;
-
         }
-
-        bool isHost = DeckersNetworkManager.Instance.IsHost;
-
-        rematchButton.interactable = isHost;
-        quitButton.interactable = isHost;
-        waitForHostText.enabled = !isHost;
-    
-        if(isHost)
+        else if (winningTeam == Team.TEAM_RED)
         {
-            whiteWinText.SetText("You win!");
-        }
-        else
-        {
-            whiteWinText.SetText("You lose...");
+            redWinText.SetText("Red wins!");
         }
 
+        return;
     }
 
-
-
-    private void OnRedWin(object sender, EventArgs e)
+    private void SetOnlineUI(Team winningTeam)
     {
-
-        whiteWinText.enabled = false;
-        redWinText.enabled = true;
-
-        ScreenManager.Instance.SwitchToScreen(UIScreen.SCREEN_GAME_OVER);
-
-        if(!DeckersNetworkManager.isOnline)
-        {
-
-            rematchButton.interactable = true;
-            quitButton.interactable = true;
-            waitForHostText.enabled = false;
-
-            redWinText.SetText("Red wins!");
-
-            return;
-
-        }
-
         bool isHost = DeckersNetworkManager.Instance.IsHost;
 
         rematchButton.interactable = isHost;
         quitButton.interactable = isHost;
         waitForHostText.enabled = !isHost;
-    
-        if(isHost)
-        {
-            redWinText.SetText("You lose...");
-        }
-        else
-        {
-            redWinText.SetText("You win!");
-        }
 
+        if (winningTeam == Team.TEAM_WHITE)
+        {
+            if (isHost)
+            {
+                whiteWinText.SetText("You win!");
+            }
+            else
+            {
+                whiteWinText.SetText("You lose...");
+            }
+        }
+        else if (winningTeam == Team.TEAM_RED)
+        {
+            if (isHost)
+            {
+                redWinText.SetText("You lose...");
+            }
+            else
+            {
+                redWinText.SetText("You win!");
+            }
+        }
     }
 
 

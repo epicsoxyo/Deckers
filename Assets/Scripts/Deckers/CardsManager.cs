@@ -62,7 +62,7 @@ public class CardsManager : MonoBehaviour
 
 
 
-    private void SetLocalSlots(object sender, System.EventArgs e)
+    private void SetLocalSlots()
     {
 
         if(DeckersNetworkManager.isOnline)

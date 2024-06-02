@@ -64,7 +64,7 @@ namespace Deckers.Game
 
             Debug.Log("Connected!");
 
-            LocalGameManager.Instance.StartGame();
+            LocalGameManager.Instance.LocalStartGame();
 
         }
 

@@ -21,8 +21,7 @@ public class CaptureManager : MonoBehaviour
     public int whiteCapturedPieces { get; private set; }
     public int redCapturedPieces  { get; private set; }
 
-    public event EventHandler onWhiteWin;
-    public event EventHandler onRedWin;
+    public event Action<Team> OnCheckersWin; // (Team winningTeam)
 
 
 
@@ -66,7 +65,7 @@ public class CaptureManager : MonoBehaviour
 
                 if(whiteCapturedPieces >= captureSlots.Count)
                 {
-                    TriggerWin(Team.TEAM_RED);
+                    OnCheckersWin?.Invoke(Team.TEAM_RED);
                     return;
                 }
 
@@ -80,7 +79,7 @@ public class CaptureManager : MonoBehaviour
 
                 if(redCapturedPieces >= captureSlots.Count)
                 {
-                    TriggerWin(Team.TEAM_WHITE);
+                    OnCheckersWin?.Invoke(Team.TEAM_WHITE);
                     return;
                 }
 
@@ -88,22 +87,6 @@ public class CaptureManager : MonoBehaviour
 
         }
 
-    }
-
-
-
-    private void TriggerWin(Team winningTeam)
-    {
-
-        switch(winningTeam)
-        {
-            case Team.TEAM_WHITE:
-                onWhiteWin?.Invoke(this, EventArgs.Empty);
-                return;
-            case Team.TEAM_RED:
-                onRedWin?.Invoke(this, EventArgs.Empty);
-                return;
-        }
     }
 
 

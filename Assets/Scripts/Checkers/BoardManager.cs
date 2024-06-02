@@ -49,7 +49,7 @@ public class Board : MonoBehaviour
 
 
 
-    private void OnGameStart(object sender, EventArgs e)
+    private void OnGameStart()
     {
 
         GamePiece.CurrentId = 0; // enforces both players have same piece IDs

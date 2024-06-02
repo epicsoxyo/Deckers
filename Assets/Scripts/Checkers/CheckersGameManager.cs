@@ -19,7 +19,7 @@ namespace Deckers.Game
 
         public Team CurrentPlayer { get; private set; }
 
-        public event EventHandler onEndTurn;
+        public event Action OnEndTurn;
 
 
 
@@ -38,6 +38,7 @@ namespace Deckers.Game
         private void Start()
         {
             _skipTurnButton.onClick.AddListener(EndTurn);
+            LocalGameManager.Instance.OnCheckersStart += BeginTurn;
         }
 
 
@@ -187,7 +188,7 @@ namespace Deckers.Game
 
         public void LocalEndTurn()
         {
-            onEndTurn?.Invoke(this, EventArgs.Empty);
+            OnEndTurn?.Invoke();
         }
 
     }

@@ -7,7 +7,6 @@ using Deckers.Game;
 public class GreetingsCard : Card
 {
 
-    private bool _hasEndedRound = false;
     private GamePiece _birthdayPiece;
 
     public override void OnPlay()
@@ -39,16 +38,8 @@ public class GreetingsCard : Card
 
     private void OnRoundEnd(int obj)
     {
-
-        if(!_hasEndedRound)
-        {
-            _hasEndedRound = true;
-            return;
-        }
-
         LocalGameManager.Instance.OnRoundEnd -= OnRoundEnd;
         _birthdayPiece.Unprotect();
-
     }
 
 }

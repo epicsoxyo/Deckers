@@ -28,7 +28,7 @@ namespace Deckers.Game
         private List<Card> _activeCards = new List<Card>();
 
         // events
-        public event EventHandler OnEndTurn;
+        public event Action OnEndTurn;
 
 
 
@@ -54,11 +54,12 @@ namespace Deckers.Game
         {
             Card.CurrentId = 0;
             LocalGameManager.Instance.OnGameStart += InstantiateCards;
+            LocalGameManager.Instance.OnDeckersStart += BeginTurn;
         }
 
 
 
-        private void InstantiateCards(object sender, EventArgs e)
+        private void InstantiateCards()
         {
 
             if(DeckersNetworkManager.isOnline && !DeckersNetworkManager.Instance.IsHost) return;
@@ -170,24 +171,24 @@ namespace Deckers.Game
 
 
 
-        public void TriggerAbilities(GameState gameState)
-        {
+        // public void TriggerAbilities(GameState gameState)
+        // {
 
-            switch(gameState)
-            {
-                case GameState.STATE_START_OF_TURN:
-                    break;
-                case GameState.STATE_MIDDLE_OF_TURN:
-                    break;
-                case GameState.STATE_END_OF_TURN:
-                    break;
-                case GameState.STATE_END_OF_GAME:
-                    break;
-            }
+        //     switch(gameState)
+        //     {
+        //         case GameState.STATE_START_OF_TURN:
+        //             break;
+        //         case GameState.STATE_MIDDLE_OF_TURN:
+        //             break;
+        //         case GameState.STATE_END_OF_TURN:
+        //             break;
+        //         case GameState.STATE_END_OF_GAME:
+        //             break;
+        //     }
 
-            OnEndTurn?.Invoke(this, EventArgs.Empty);
+        //     OnEndTurn?.Invoke(this, EventArgs.Empty);
 
-        }
+        // }
 
 
 
@@ -211,7 +212,7 @@ namespace Deckers.Game
 
             UpdateCardsUI();
 
-            OnEndTurn?.Invoke(this, EventArgs.Empty);
+            OnEndTurn?.Invoke();
 
         }
 

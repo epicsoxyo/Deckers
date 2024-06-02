@@ -1,8 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-
-using UnityEngine;
-
 using Deckers.Game;
 
 
@@ -19,8 +14,10 @@ public class Donkey : Card
 
     public override void OnPlay() {} // overrides DeckersGameManager.Instance.EndTurn()
 
-    public override void OnDeckersTurnStart()
+    public override void OnDeckersTurnStart(Team team)
     {
+
+        // PRIORITY: donkey script
 
         // if it is the first turn,
 

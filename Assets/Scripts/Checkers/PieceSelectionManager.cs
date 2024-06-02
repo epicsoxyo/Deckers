@@ -15,9 +15,9 @@ public class PieceSelectionManager : MonoBehaviour
     public GamePiece SelectedPiece { get; private set; }
     public Dictionary<GridSquare, GamePiece> AvailableMoves = new Dictionary<GridSquare, GamePiece>();
 
-    public event EventHandler onWhiteActive;
-    public event EventHandler onRedActive;
-    public event EventHandler onNullActive;
+    public event Action OnWhiteActive;
+    public event Action OnRedActive;
+    public event Action OnNullActive;
 
 
 
@@ -45,13 +45,13 @@ public class PieceSelectionManager : MonoBehaviour
         switch(activeTeam)
         {
             case Team.TEAM_WHITE:
-                onWhiteActive?.Invoke(this, EventArgs.Empty);
+                OnWhiteActive?.Invoke();
                 return;
             case Team.TEAM_RED:
-                onRedActive?.Invoke(this, EventArgs.Empty);
+                OnRedActive?.Invoke();
                 return;
             case Team.TEAM_NULL:
-                onNullActive?.Invoke(this, EventArgs.Empty);
+                OnNullActive?.Invoke();
                 return;
         }
     }

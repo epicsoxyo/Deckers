@@ -88,15 +88,15 @@ public class GamePiece : MonoBehaviour
 
     private void Start()
     {
-        PieceSelectionManager.Instance.onWhiteActive += OnWhiteActive;
-        PieceSelectionManager.Instance.onRedActive += OnRedActive;
-        PieceSelectionManager.Instance.onNullActive += OnNullActive;
-        CheckersGameManager.Instance.onEndTurn += OnNullActive;
+        PieceSelectionManager.Instance.OnWhiteActive += OnWhiteActive;
+        PieceSelectionManager.Instance.OnRedActive += OnRedActive;
+        PieceSelectionManager.Instance.OnNullActive += OnNullActive;
+        CheckersGameManager.Instance.OnEndTurn += OnNullActive;
     }
 
 
 
-    private void OnWhiteActive(object sender, EventArgs e)
+    private void OnWhiteActive()
     {
         if(IsCaptured) return;
         SetActive(Player == Team.TEAM_WHITE);
@@ -104,7 +104,7 @@ public class GamePiece : MonoBehaviour
 
 
 
-    private void OnRedActive(object sender, EventArgs e)
+    private void OnRedActive()
     {
         if(IsCaptured) return;
         SetActive(Player == Team.TEAM_RED);
@@ -112,7 +112,7 @@ public class GamePiece : MonoBehaviour
 
 
 
-    private void OnNullActive(object sender, EventArgs e)
+    private void OnNullActive()
     {
         if(IsCaptured) return;
         SetActive(false);

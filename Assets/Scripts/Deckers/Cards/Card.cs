@@ -99,9 +99,9 @@ public abstract class Card : MonoBehaviour
 
     public virtual void OnPlay() { DeckersGameManager.Instance.EndTurn(); }
 
-    public virtual void OnDeckersTurnStart() {}
+    public virtual void OnDeckersTurnStart(Team team) {}
 
-    public virtual void OnCheckersTurnStart() {}
+    public virtual void OnCheckersTurnStart(Team team) {}
 
     public virtual void OnTurnEnd() {}
 
