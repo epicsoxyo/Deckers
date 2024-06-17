@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 using Deckers.Game;
-using Deckers.Network;
+// using Deckers.Network;
 
 
 
@@ -57,12 +57,12 @@ public class Board : MonoBehaviour
         GenerateBoard();
         InitialiseGamePieces();
 
-        if(!DeckersNetworkManager.isOnline) return;
+        // if(!DeckersNetworkManager.isOnline) return;
 
-        if(OnlineGameManager.Instance.localTeam == Team.TEAM_RED)
-        {
-            playableArea.GetComponent<GridLayoutGroup>().startCorner = GridLayoutGroup.Corner.LowerRight;
-        }
+        // if(OnlineGameManager.Instance.localTeam == Team.TEAM_RED)
+        // {
+        //     playableArea.GetComponent<GridLayoutGroup>().startCorner = GridLayoutGroup.Corner.LowerRight;
+        // }
 
     }
 

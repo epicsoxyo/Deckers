@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 using Deckers.Game;
-using Deckers.Network;
+// using Deckers.Network;
 
 
 
@@ -133,11 +133,11 @@ public class GamePiece : MonoBehaviour
 
         if(IsCaptured) return;
 
-        if(DeckersNetworkManager.isOnline
-        && OnlineGameManager.Instance.localTeam != Player)
-        {
-            return;
-        }
+        // if(DeckersNetworkManager.isOnline
+        // && OnlineGameManager.Instance.localTeam != Player)
+        // {
+        //     return;
+        // }
 
         onClick?.Invoke(this, EventArgs.Empty);
 

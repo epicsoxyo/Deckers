@@ -9,7 +9,7 @@ public abstract class Card : MonoBehaviour
 {
 
     public static int CurrentId;
-    public int CardId { get; private set; }
+    public int CardId { get; protected set; }
 
     protected Image _cardImage;
     protected Button _cardButton;
@@ -20,7 +20,7 @@ public abstract class Card : MonoBehaviour
     [SerializeField] protected CardInfo description;
 
     protected Team _team;
-    public Team team
+    public Team Team
     {
         get { return _team; }
         set
@@ -94,6 +94,7 @@ public abstract class Card : MonoBehaviour
 
 
     public virtual bool IsPlayable() { return true; }
+    public virtual bool CanHaveMultiple() { return true; }
 
     public virtual void OnDraw() {}
 

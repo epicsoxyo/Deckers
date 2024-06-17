@@ -13,4 +13,8 @@ MonoBehaviour:
   m_Name: TheSun
   m_EditorClassIdentifier: 
   cardName: The Sun
-  cardDescription: While held, gain the ability to see all of your opponent's cards.
+  cardDescription: 'FOR DEMO PURPOSES ONLY - DOES NOT WORK YET
+
+
+    While held,
+    gain the ability to see all of your opponent''s cards.'

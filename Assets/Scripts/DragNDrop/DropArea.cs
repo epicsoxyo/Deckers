@@ -19,9 +19,17 @@ public enum DraggableElementType
 public class DropArea : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
 
+    private static int _currentId; // TODO: make this reset at the start of a new game
     public int areaId;
 
     public DraggableElementType draggableElementType;
+
+
+
+    private void Awake()
+    {
+        areaId = _currentId++;
+    }
 
 
 

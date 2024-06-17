@@ -11,7 +11,7 @@ public class GreetingsCard : Card
 
     public override void OnPlay()
     {
-        PieceSelectionManager.Instance.UpdateActivePieces(team);
+        PieceSelectionManager.Instance.UpdateActivePieces(Team);
         GamePiece.onClick += SelectPiece;
     }
 

@@ -53,12 +53,13 @@ public class CaptureManager : MonoBehaviour
     {
 
         List<Transform> captureSlots;
-        bool flipDials = (OnlineGameManager.Instance.localTeam == Team.TEAM_RED);
+        // bool flipDials = (OnlineGameManager.Instance.localTeam == Team.TEAM_RED);
 
         switch(capturedPiece.Player)
         {
             case Team.TEAM_WHITE:
-                captureSlots = flipDials ? _lowerCaptureSlots : _upperCaptureSlots;
+                // captureSlots = flipDials ? _lowerCaptureSlots : _upperCaptureSlots;
+                captureSlots = _upperCaptureSlots;
 
                 capturedPiece.transform.SetParent(captureSlots[whiteCapturedPieces]);
                 whiteCapturedPieces++;
@@ -72,7 +73,8 @@ public class CaptureManager : MonoBehaviour
                 break;
 
             case Team.TEAM_RED:
-                captureSlots = flipDials ? _upperCaptureSlots : _lowerCaptureSlots;
+                // captureSlots = flipDials ? _upperCaptureSlots : _lowerCaptureSlots;
+                captureSlots = _lowerCaptureSlots;
 
                 capturedPiece.transform.SetParent(captureSlots[redCapturedPieces]);
                 redCapturedPieces++;
@@ -94,17 +96,19 @@ public class CaptureManager : MonoBehaviour
     public GamePiece Pop(Team capturedPieceTeam)
     {
 
-        bool flipDials = (OnlineGameManager.Instance.localTeam == Team.TEAM_RED);
+        // bool flipDials = (OnlineGameManager.Instance.localTeam == Team.TEAM_RED);
 
         switch(capturedPieceTeam)
         {
             case Team.TEAM_WHITE:
-                List<Transform> captureSlots = flipDials ? _lowerCaptureSlots : _upperCaptureSlots;
+                // List<Transform> captureSlots = flipDials ? _lowerCaptureSlots : _upperCaptureSlots;
+                List<Transform> captureSlots = _upperCaptureSlots;
                 if(captureSlots == null) return null;
                 return captureSlots[--whiteCapturedPieces].GetChild(0).GetComponent<GamePiece>();
 
             case Team.TEAM_RED:
-                captureSlots = flipDials ? _upperCaptureSlots : _lowerCaptureSlots;
+                // captureSlots = flipDials ? _upperCaptureSlots : _lowerCaptureSlots;
+                captureSlots = _lowerCaptureSlots;
                 if(captureSlots == null) return null;
                 return captureSlots[--redCapturedPieces].GetChild(0).GetComponent<GamePiece>();
         }

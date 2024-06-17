@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using Deckers.Game;
-using Deckers.Network;
+// using Deckers.Network;
 
 
 
@@ -49,11 +49,11 @@ public class DropAreaManager : MonoBehaviour
     public void Swap(DropArea slot1, DropArea slot2)
     {
 
-        if(DeckersNetworkManager.isOnline)
-        {
-            OnlineGameManager.Instance.Deckers_SwapSlots(slot1.areaId, slot2.areaId);
-            return;
-        }
+        // if(DeckersNetworkManager.isOnline)
+        // {
+        //     OnlineGameManager.Instance.Deckers_SwapSlots(slot1.areaId, slot2.areaId);
+        //     return;
+        // }
 
         LocalSwap(slot1.areaId, slot2.areaId);
 

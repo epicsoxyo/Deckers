@@ -2,7 +2,7 @@ using System;
 
 using UnityEngine;
 
-using Deckers.Network;
+// using Deckers.Network;
 
 
 
@@ -81,11 +81,13 @@ namespace Deckers.Game
 
             _waitingForAction = true;
 
-            if(DeckersNetworkManager.isOnline)
-            {
-                OnlineGameManager.Instance.StartGame();
-            }
-            else{ LocalStartGame(); }
+            // if(DeckersNetworkManager.isOnline)
+            // {
+            //     OnlineGameManager.Instance.StartGame();
+            // }
+            // else{ LocalStartGame(); }
+
+            LocalStartGame();
 
         }
 

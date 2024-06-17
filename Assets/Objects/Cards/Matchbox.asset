@@ -13,6 +13,10 @@ MonoBehaviour:
   m_Name: Matchbox
   m_EditorClassIdentifier: 
   cardName: Matchbox
-  cardDescription: On play, choose one tile to set fire to. Each turn, the fire spreads
-    to a random adjacent tile. All burning pieces are eliminated at the start of
-    the next round. Moving a burning piece sets fire to the tile below it.
+  cardDescription: 'FOR DEMO PURPOSES ONLY - DOES NOT WORK YET
+
+
+    On play, choose
+    one tile to set fire to. Each turn, the fire spreads to a random adjacent tile.
+    All burning pieces are eliminated at the start of the next round. Moving a burning
+    piece sets fire to the tile below it.'

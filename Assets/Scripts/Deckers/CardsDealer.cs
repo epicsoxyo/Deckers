@@ -4,15 +4,25 @@ using UnityEngine;
 
 
 
+public enum CardsPool
+{
+
+    POOL_NORMAL,
+    POOL_JOKER,
+
+    // add card pool names here...
+
+}
+
+
+
 public class CardsDealer : MonoBehaviour
 {
 
     public static CardsDealer Instance { get; private set; }
 
-    [SerializeField] private List<GameObject> cardsPool = new List<GameObject>();
+    [SerializeField] private List<GameObject> normalPool = new List<GameObject>();
     [SerializeField] private List<GameObject> jokerPool = new List<GameObject>();
-
-    [SerializeField] private Transform _spawnArea;
 
 
 
@@ -28,23 +38,54 @@ public class CardsDealer : MonoBehaviour
 
 
 
-    public int GetRandomCardIndex()
+    public int GetRandomCardIndex(CardsPool cardsPool = CardsPool.POOL_NORMAL)
     {
-        int maxIndex = cardsPool.Count > 0 ? cardsPool.Count : jokerPool.Count;
+
+        int maxIndex;
+
+        switch(cardsPool)
+        {
+            case CardsPool.POOL_NORMAL:
+                maxIndex = normalPool.Count - 1;
+                break;
+            case CardsPool.POOL_JOKER:
+                maxIndex = jokerPool.Count - 1;
+                break;
+            default:
+                Debug.LogWarning(cardsPool + " does not have an assigned pool. Using normal pool...");
+                maxIndex = normalPool.Count - 1;
+                break;
+        }
+
         return Random.Range(0, maxIndex);
+
     }
 
 
 
-    public Card GetNewCardFromIndex(int index, bool forceUseJokerPool = false)
+    public Card GetNewCardFromIndex(int index, Transform parentTransform, CardsPool cardsPool = CardsPool.POOL_NORMAL)
     {
 
-        bool useJokerPool = forceUseJokerPool || (cardsPool.Count == 0);
+        GameObject cardGameObject;
 
-        GameObject cardGameObject = useJokerPool ? jokerPool[index] : cardsPool[index];
-        Card instancedCard = Instantiate(cardGameObject, _spawnArea, false).GetComponent<Card>();
+        switch(cardsPool)
+        {
+            case CardsPool.POOL_JOKER:
+                cardGameObject = jokerPool[index];
+                break;
+            default:
+                if(normalPool.Count == 0) { cardGameObject = jokerPool[index]; }
+                else
+                {
+                    cardGameObject = normalPool[index];
+                    normalPool.RemoveAt(index); // FOR NOW!!
+                }
+                break;
+        }
 
-        if(!useJokerPool) cardsPool.RemoveAt(index);
+        Card instancedCard = Instantiate(cardGameObject, parentTransform, false).GetComponent<Card>();
+
+        // if(!instancedCard.CanHaveMultiple()) { normalPool.RemoveAt(index); }
 
         return instancedCard;
 

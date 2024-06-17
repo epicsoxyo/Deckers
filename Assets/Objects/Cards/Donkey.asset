@@ -13,10 +13,13 @@ MonoBehaviour:
   m_Name: Donkey
   m_EditorClassIdentifier: 
   cardName: Donkey
-  cardDescription: 'THIS CARD CANNOT BE PLAYED.
+  cardDescription: 'FOR DEMO PURPOSES ONLY - DOES NOT WORK YET
 
 
-    While held by any player, at
-    the start of each turn, players must take turns to choose a card from their opponent''s
-    hand to transfer to their own hand. At the end of the game, if the winner is
-    holding the donkey, they lose.'
+    THIS CARD CANNOT
+    BE PLAYED.
+
+
+    While held by any player, at the start of each turn, players
+    must take turns to choose a card from their opponent''s hand to transfer to their
+    own hand. At the end of the game, if the winner is holding the donkey, they lose.'

@@ -13,5 +13,9 @@ MonoBehaviour:
   m_Name: GoldenTicket
   m_EditorClassIdentifier: 
   cardName: Golden Ticket
-  cardDescription: Choose one piece to go on an excursion to a chocolate factory.
-    That piece is protected for the current round, and will return for the next round.
+  cardDescription: 'FOR DEMO PURPOSES ONLY - DOES NOT WORK YET
+
+
+    Choose one piece
+    to go on an excursion to a chocolate factory. That piece is protected for the
+    current round, and will return for the next round.'

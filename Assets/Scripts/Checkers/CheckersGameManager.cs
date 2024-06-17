@@ -3,7 +3,7 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 
-using Deckers.Network;
+// using Deckers.Network;
 
 
 
@@ -50,12 +50,12 @@ namespace Deckers.Game
 
             PieceSelectionManager.Instance.UpdateActivePieces(CurrentPlayer);
 
-            if(DeckersNetworkManager.isOnline
-            && player != OnlineGameManager.Instance.localTeam)
-            {
-                ScreenManager.Instance.SwitchToScreen(UIScreen.SCREEN_EMPTY);
-                return;
-            }
+            // if(DeckersNetworkManager.isOnline
+            // && player != OnlineGameManager.Instance.localTeam)
+            // {
+            //     ScreenManager.Instance.SwitchToScreen(UIScreen.SCREEN_EMPTY);
+            //     return;
+            // }
 
             ScreenManager.Instance.SwitchToScreen(UIScreen.SCREEN_CHECKERS);
             GridSquare.onGridClick += OnGridClick;
@@ -80,35 +80,39 @@ namespace Deckers.Game
         public void TakeTurn(GridSquare destination)
         {
 
-            bool isOnline = DeckersNetworkManager.isOnline;
-            OnlineGameManager networkedGame = OnlineGameManager.Instance;
+            // bool isOnline = DeckersNetworkManager.isOnline;
+            // OnlineGameManager networkedGame = OnlineGameManager.Instance;
 
             GamePiece selectedPiece = PieceSelectionManager.Instance.SelectedPiece;
 
             // movement
 
-            if(isOnline)
-            {
-                networkedGame.Checkers_MovePiece(selectedPiece.Id, destination.x, destination.y);
-            }
-            else
-            {
-                LocalMovePiece(selectedPiece.Id, destination.x, destination.y);
-            }
+            // if(isOnline)
+            // {
+            //     networkedGame.Checkers_MovePiece(selectedPiece.Id, destination.x, destination.y);
+            // }
+            // else
+            // {
+            //     LocalMovePiece(selectedPiece.Id, destination.x, destination.y);
+            // }
+
+            LocalMovePiece(selectedPiece.Id, destination.x, destination.y);
 
             // promotion
 
             if((CurrentPlayer == Team.TEAM_WHITE && destination.y == 8)
             || (CurrentPlayer == Team.TEAM_RED && destination.y == 1))
             {
-                if(isOnline)
-                {
-                    networkedGame.Checkers_PromotePiece(selectedPiece.Id);
-                }
-                else
-                {
-                    LocalPromotePiece(selectedPiece.Id);
-                }
+                // if(isOnline)
+                // {
+                //     networkedGame.Checkers_PromotePiece(selectedPiece.Id);
+                // }
+                // else
+                // {
+                //     LocalPromotePiece(selectedPiece.Id);
+                // }
+
+                LocalPromotePiece(selectedPiece.Id);
             }
 
             // capture
@@ -120,14 +124,16 @@ namespace Deckers.Game
                 return;
             }
 
-            if(isOnline)
-            {
-                networkedGame.Checkers_CapturePiece(capturedPiece.Id);
-            }
-            else
-            {
-                LocalCapturePiece(capturedPiece.Id);
-            }
+            // if(isOnline)
+            // {
+            //     networkedGame.Checkers_CapturePiece(capturedPiece.Id);
+            // }
+            // else
+            // {
+            //     LocalCapturePiece(capturedPiece.Id);
+            // }
+
+            LocalCapturePiece(capturedPiece.Id);
 
             // bonus turn
 
@@ -170,14 +176,16 @@ namespace Deckers.Game
         public void EndTurn()
         {
 
-            if(DeckersNetworkManager.isOnline)
-            {
-                OnlineGameManager.Instance.Checkers_EndTurn();
-            }
-            else
-            {
-                LocalEndTurn();
-            }
+            // if(DeckersNetworkManager.isOnline)
+            // {
+            //     OnlineGameManager.Instance.Checkers_EndTurn();
+            // }
+            // else
+            // {
+            //     LocalEndTurn();
+            // }
+
+            LocalEndTurn();
 
             PieceSelectionManager.Instance.ClearCurrentSelection();
 

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using Deckers.Game;
-using Deckers.Network;
+// using Deckers.Network;
 
 
 
@@ -55,56 +55,25 @@ public class CardsManager : MonoBehaviour
 
 
 
-    private void Start()
-    {
-        LocalGameManager.Instance.OnGameStart += SetLocalSlots;
-    }
-
-
-
-    private void SetLocalSlots()
-    {
-
-        if(DeckersNetworkManager.isOnline)
-        {
-            if(!DeckersNetworkManager.Instance.IsHost) return;
-            OnlineGameManager.Instance.Deckers_SwapLocalSlots();
-        }
-
-        foreach(Transform slot in upperCards)
-        {
-            RedCardSlots.Add(slot);
-            slot.GetComponent<DropArea>().draggableElementType = DraggableElementType.DRAGGABLE_RED_CARD;
-        }
-        foreach(Transform slot in lowerCards)
-        {
-            WhiteCardSlots.Add(slot);
-            slot.GetComponent<DropArea>().draggableElementType = DraggableElementType.DRAGGABLE_WHITE_CARD;
-        }
-
-    }
-
-
-
     public void SwapLocalSlots()
     {
 
-        foreach(Transform slot in lowerCards)
-        {
-            WhiteCardSlots.Add(slot);
-            slot.GetComponent<DropArea>().draggableElementType = DraggableElementType.DRAGGABLE_WHITE_CARD;
-        }
-        for(int i = upperCards.childCount - 1; i >= 0; i--)
-        {
-            Transform slot = upperCards.GetChild(i);
-            RedCardSlots.Add(slot);
-            slot.SetParent(lowerCards);
-            slot.GetComponent<DropArea>().draggableElementType = DraggableElementType.DRAGGABLE_RED_CARD;
-        }
-        foreach(Transform slot in WhiteCardSlots)
-        {
-            slot.SetParent(upperCards);
-        }
+        // foreach(Transform slot in lowerCards)
+        // {
+        //     WhiteCardSlots.Add(slot);
+        //     slot.GetComponent<DropArea>().draggableElementType = DraggableElementType.DRAGGABLE_WHITE_CARD;
+        // }
+        // for(int i = upperCards.childCount - 1; i >= 0; i--)
+        // {
+        //     Transform slot = upperCards.GetChild(i);
+        //     RedCardSlots.Add(slot);
+        //     slot.SetParent(lowerCards);
+        //     slot.GetComponent<DropArea>().draggableElementType = DraggableElementType.DRAGGABLE_RED_CARD;
+        // }
+        // foreach(Transform slot in WhiteCardSlots)
+        // {
+        //     slot.SetParent(upperCards);
+        // }
 
     }
 
@@ -115,11 +84,11 @@ public class CardsManager : MonoBehaviour
 
         int index = CardsDealer.Instance.GetRandomCardIndex();
 
-        if(DeckersNetworkManager.isOnline)
-        {
-            OnlineGameManager.Instance.Deckers_DrawCard(team, index);
-            return;
-        }
+        // if(DeckersNetworkManager.isOnline)
+        // {
+        //     OnlineGameManager.Instance.Deckers_DrawCard(team, index);
+        //     return;
+        // }
 
         LocalDrawRandomCard(team, index);
 
@@ -128,33 +97,26 @@ public class CardsManager : MonoBehaviour
     public void LocalDrawRandomCard(Team team, int index)
     {
 
-        List<Transform> slots;
+        Transform slot;
 
         switch(team)
         {
             case Team.TEAM_WHITE:
-                WhiteCards++;
-                slots = WhiteCardSlots;
+                Debug.Log("Drawing for white team");
+                if(TryGetEmptySlot(WhiteCardSlots, out slot)) { WhiteCards++; }
                 break;
             case Team.TEAM_RED:
-                RedCards++;
-                slots = RedCardSlots;
+                Debug.Log("Drawing for red team");
+                if(TryGetEmptySlot(RedCardSlots, out slot)) { RedCards++; }
                 break;
             default:
                 Debug.LogError("Attempted to draw card but team was not given!");
                 return;
         }
 
-        if(!TryGetEmptySlot(slots, out Transform slot))
-        {
-            Debug.LogWarning("Attempted to draw card but there were no available slots!");
-            return;
-        }
+        Card card = CardsDealer.Instance.GetNewCardFromIndex(index, slot);
 
-        Card card = CardsDealer.Instance.GetNewCardFromIndex(index);
-
-        card.team = team;
-        card.transform.SetParent(slot);
+        card.Team = team;
 
         CardsInPlay[card.CardId] = card;
 
@@ -167,26 +129,24 @@ public class CardsManager : MonoBehaviour
     public void LocalGiveCardToPlayer(Team team, ref Card card)
     {
 
-        List<Transform> slots;
+        Transform slot;
 
         switch(team)
         {
             case Team.TEAM_WHITE:
                 WhiteCards++;
-                slots = WhiteCardSlots;
+                if(!TryGetEmptySlot(WhiteCardSlots, out slot)) { return; }
                 break;
             case Team.TEAM_RED:
                 RedCards++;
-                slots = RedCardSlots;
+                if(!TryGetEmptySlot(RedCardSlots, out slot)) { return; }
                 break;
             default:
                 Debug.LogError("Attempted to give card to player but team was not given!");
                 return;
         }
 
-        if(!TryGetEmptySlot(slots, out Transform slot)) { return; }
-
-        card.team = team;
+        card.Team = team;
         card.transform.SetParent(slot);
 
         CardsInPlay[card.CardId] = card;
@@ -195,19 +155,21 @@ public class CardsManager : MonoBehaviour
 
 
 
-    private bool TryGetEmptySlot(List<Transform> slots, out Transform slot)
+    private bool TryGetEmptySlot(List<Transform> slots, out Transform selectedSlot)
     {
 
-        foreach(Transform t in slots)
+        foreach(Transform slot in slots)
         {
-            if(t.childCount == 0)
+            if(slot.childCount == 0)
             {
-                slot = t;
+                selectedSlot = slot;
                 return true;
             }
+            Debug.Log(slot.GetChild(0).name);
         }
 
-        slot = null;
+        Debug.LogWarning("Slot not found!");
+        selectedSlot = null;
         return false;
 
     }
@@ -226,11 +188,11 @@ public class CardsManager : MonoBehaviour
         {
             if(hideGroup != CardsGroup.GROUP_NULL)
             {
-                card.Hidden = (card.team == Team.TEAM_WHITE) ? whiteIsHidden : redIsHidden;
+                card.Hidden = (card.Team == Team.TEAM_WHITE) ? whiteIsHidden : redIsHidden;
             }
             if(activeGroup != CardsGroup.GROUP_NULL)
             {
-                card.Active = (card.team == Team.TEAM_WHITE) ? whiteIsActive : redIsActive;
+                card.Active = (card.Team == Team.TEAM_WHITE) ? whiteIsActive : redIsActive;
             }
         }
 
@@ -247,7 +209,7 @@ public class CardsManager : MonoBehaviour
 
         Card activeCard =  playArea.GetChild(0).GetComponent<Card>();
 
-        List<Transform> slots = (activeCard.team == Team.TEAM_WHITE)
+        List<Transform> slots = (activeCard.Team == Team.TEAM_WHITE)
         ? WhiteCardSlots
         : RedCardSlots;
 
@@ -266,25 +228,33 @@ public class CardsManager : MonoBehaviour
 
 
 
-    public int Consume(Card card)
+    public int Discard(Card card, bool playCard = false)
     {
 
-        card.transform.SetParent(discardArea);
+        Debug.Log("DISCARDING " + card.name + "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 
-        switch(card.team)
+        card.transform.SetParent(discardArea);
+        Debug.Log("Setting parent of card to " + discardArea);
+
+        switch(card.Team)
         {
             case Team.TEAM_WHITE:
                 WhiteCards--;
+                Debug.Log("team is white. whitecards: " + WhiteCards);
                 break;
             case Team.TEAM_RED:
                 RedCards--;
+                Debug.Log("team is red. redcards: " + RedCards);
                 break;
             default:
                 Debug.LogWarning("Consumed card does not have an assigned team.");
                 break;
         }
 
+        Debug.Log("Removing card from cardsinplay.");
         CardsInPlay.Remove(card.CardId);
+
+        if(playCard) {Debug.Log("Playing card."); card.OnPlay(); }
 
         return card.CardId;
 

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-using Deckers.Network;
+// using Deckers.Network;
 
 
 
@@ -62,7 +62,7 @@ namespace Deckers.Game
         private void InstantiateCards()
         {
 
-            if(DeckersNetworkManager.isOnline && !DeckersNetworkManager.Instance.IsHost) return;
+            // if(DeckersNetworkManager.isOnline && !DeckersNetworkManager.Instance.IsHost) return;
 
             for(int i = 0; i < 3; i++)
             {
@@ -90,7 +90,8 @@ namespace Deckers.Game
         private void UpdateCardsUI()
         {
 
-            Team localTeam = OnlineGameManager.Instance.localTeam;
+            // Team localTeam = OnlineGameManager.Instance.localTeam;
+            Team localTeam = Team.TEAM_NULL;
 
             switch(_currentPlayer)
             {
@@ -112,13 +113,13 @@ namespace Deckers.Game
                     break;
             }
 
-            if(!DeckersNetworkManager.isOnline) return;
+            // if(!DeckersNetworkManager.isOnline) return;
 
-            bool showPlayArea = (OnlineGameManager.Instance.localTeam == _currentPlayer);
+            // bool showPlayArea = (OnlineGameManager.Instance.localTeam == _currentPlayer);
 
-            playAreaCanvasGroup.alpha = showPlayArea ? 1 : 0;
-            playAreaCanvasGroup.blocksRaycasts = showPlayArea;
-            playAreaCanvasGroup.interactable = showPlayArea;
+            // playAreaCanvasGroup.alpha = showPlayArea ? 1 : 0;
+            // playAreaCanvasGroup.blocksRaycasts = showPlayArea;
+            // playAreaCanvasGroup.interactable = showPlayArea;
 
         }
 
@@ -147,11 +148,11 @@ namespace Deckers.Game
 
             Debug.Log("Playing card " + card.name);
 
-            if(DeckersNetworkManager.isOnline)
-            {
-                OnlineGameManager.Instance.Deckers_PlayCard(card.CardId);
-                return;
-            }
+            // if(DeckersNetworkManager.isOnline)
+            // {
+            //     OnlineGameManager.Instance.Deckers_PlayCard(card.CardId);
+            //     return;
+            // }
 
             LocalPlayCard(card.CardId);
 
@@ -162,10 +163,9 @@ namespace Deckers.Game
 
             Card card = CardsManager.Instance.CardsInPlay[cardId];
 
-            if(card.IsPlayable()){ CardsManager.Instance.Consume(card); }
+            if(card.IsPlayable()){ CardsManager.Instance.Discard(card, playCard: true); }
 
             _activeCards.Add(card);
-            card.OnPlay();
 
         }
 
@@ -195,11 +195,11 @@ namespace Deckers.Game
         public void EndTurn()
         {
 
-            if(DeckersNetworkManager.isOnline)
-            {
-                OnlineGameManager.Instance.Deckers_EndTurn();
-                return;
-            }
+            // if(DeckersNetworkManager.isOnline)
+            // {
+            //     OnlineGameManager.Instance.Deckers_EndTurn();
+            //     return;
+            // }
 
             LocalEndTurn();
 

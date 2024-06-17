@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 
-using Deckers.Network;
+// using Deckers.Network;
 
 
 
@@ -21,8 +21,8 @@ public class MainMenu : MonoBehaviour
     public static MainMenu Instance;
     private Animator menuStateMachine;
 
-    private LobbyMenu lobbyMenu;
-    private JoinMenu joinMenu;
+    // private LobbyMenu lobbyMenu;
+    // private JoinMenu joinMenu;
     // private Stack<Menu> openPanels = new Stack<Menu>();
 
     [Header("Main Menu Buttons")] 
@@ -33,6 +33,9 @@ public class MainMenu : MonoBehaviour
     [Header("Information UI")]
     [SerializeField] private InfoUI infoUI;
 
+    [Header("(Temp) Coming soon animator")]
+    [SerializeField] private Animator _comingSoonAnimator;
+
 
 
     private void Awake()
@@ -41,12 +44,21 @@ public class MainMenu : MonoBehaviour
         if(!Init()) return;
 
         menuStateMachine = GetComponent<Animator>();
-        lobbyMenu = GetComponentInChildren<LobbyMenu>();
+        // lobbyMenu = GetComponentInChildren<LobbyMenu>();
 
-        createLobbyButton.onClick.AddListener(async () => await CreateLobby());
-        joinLobbyButton.onClick.AddListener(JoinLobby);
+        // createLobbyButton.onClick.AddListener(async () => await CreateLobby());
+        // joinLobbyButton.onClick.AddListener(JoinLobby);
+
+        createLobbyButton.onClick.AddListener(ComingSoon);
+        joinLobbyButton.onClick.AddListener(ComingSoon);
+
         localPlayButton.onClick.AddListener(TriggerLocalGameStart);
 
+    }
+
+    private void ComingSoon()
+    {
+        _comingSoonAnimator.SetTrigger("Flash");
     }
 
 
@@ -76,41 +88,41 @@ public class MainMenu : MonoBehaviour
 
 
 
-    private async Task CreateLobby()
-    {
+    // private async Task CreateLobby()
+    // {
 
-        ActivateMenuButtons(false);
+    //     ActivateMenuButtons(false);
 
-        string playerName = "Ready";
+    //     string playerName = "Ready";
 
-        bool lobbyCreated = await LobbyManager.Instance.CreateLobby(playerName);
-        if (!lobbyCreated)
-        {
-            // TODO: add pop up that says lobby could not be created
-            // infoUI.ShowError("Lobby could not be created");
-            Debug.LogError("lobby could not be created");
-            return;
-        }
+    //     bool lobbyCreated = await LobbyManager.Instance.CreateLobby(playerName);
+    //     if (!lobbyCreated)
+    //     {
+    //         // TODO: add pop up that says lobby could not be created
+    //         // infoUI.ShowError("Lobby could not be created");
+    //         Debug.LogError("lobby could not be created");
+    //         return;
+    //     }
 
-        OpenLobbyMenu();
+    //     OpenLobbyMenu();
 
-    }
-
-
-
-    public void OpenLobbyMenu()
-    {
-        menuStateMachine.SetTrigger("ToLobby");
-        lobbyMenu.SetLobbyInfoUI(LobbyManager.currentLobby);
-    }
+    // }
 
 
 
-    private void JoinLobby()
-    {
-        ActivateMenuButtons(false);
-        menuStateMachine.SetTrigger("ToJoin");
-    }
+    // public void OpenLobbyMenu()
+    // {
+    //     menuStateMachine.SetTrigger("ToLobby");
+    //     lobbyMenu.SetLobbyInfoUI(LobbyManager.currentLobby);
+    // }
+
+
+
+    // private void JoinLobby()
+    // {
+    //     ActivateMenuButtons(false);
+    //     menuStateMachine.SetTrigger("ToJoin");
+    // }
 
 
     
@@ -121,7 +133,8 @@ public class MainMenu : MonoBehaviour
 
     private void LocalGameStart()
     {
-        SceneLoader.Instance.LoadSceneLocally(GameScene.Game);
+        // SceneLoader.Instance.LoadSceneLocally(GameScene.Game);
+        SceneLoader.LoadSceneLocally(GameScene.Game);
     }
 
 

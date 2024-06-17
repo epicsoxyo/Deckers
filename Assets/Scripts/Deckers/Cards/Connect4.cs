@@ -28,7 +28,7 @@ public class Connect4 : Card
     {
 
         CaptureManager captureManager = CaptureManager.Instance;
-        switch(team)
+        switch(Team)
         {
             case Team.TEAM_WHITE:
                 return captureManager.redCapturedPieces > 0;
@@ -56,7 +56,7 @@ public class Connect4 : Card
 
         CheckForFlipOverlay();
 
-        Team capturedPieceTeam = (team == Team.TEAM_WHITE) ? Team.TEAM_RED : Team.TEAM_WHITE;
+        Team capturedPieceTeam = (Team == Team.TEAM_WHITE) ? Team.TEAM_RED : Team.TEAM_WHITE;
         GamePiece piece = CaptureManager.Instance.Pop(capturedPieceTeam);
 
         if(piece == null)
@@ -106,7 +106,7 @@ public class Connect4 : Card
         //     OnlineGameManager.Instance.localTeam != team :
         //     team == Team.TEAM_RED;
 
-        bool isFlipped = team == Team.TEAM_RED;
+        bool isFlipped = Team == Team.TEAM_RED;
         
         overlay.transform.rotation = isFlipped ?
             Quaternion.Euler(0, 0, 180) :
@@ -140,7 +140,7 @@ public class Connect4 : Card
             }
         }
 
-        int posY = (team == Team.TEAM_WHITE) ?
+        int posY = (Team == Team.TEAM_WHITE) ?
             (_currentSlot.Index % 2) + 1 :
             7 + (_currentSlot.Index % 2);
 
@@ -152,7 +152,7 @@ public class Connect4 : Card
 
     private void CheckForPromotion(GamePiece piece)
     {
-        int promoteOddColumns = (team == Team.TEAM_RED) ? 1 : 0;
+        int promoteOddColumns = (Team == Team.TEAM_RED) ? 1 : 0;
         if((_currentSlot.Index % 2) == promoteOddColumns){ piece.Promote(); }
     }
 

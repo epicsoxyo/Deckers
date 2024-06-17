@@ -7,8 +7,11 @@ public class Donkey : Card
 
     public override bool IsPlayable() { return false;}
 
+    public override bool CanHaveMultiple() { return false; }
+
     public override void OnDraw()
     {
+        // add Donkey's card-switching mechanic to the active abilities list on draw
         DeckersGameManager.Instance.PlayCard(this);
     }
 
@@ -19,7 +22,7 @@ public class Donkey : Card
 
         // PRIORITY: donkey script
 
-        // if it is the first turn,
+
 
     }
 

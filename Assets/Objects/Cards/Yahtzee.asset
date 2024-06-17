@@ -13,4 +13,6 @@ MonoBehaviour:
   m_Name: Yahtzee
   m_EditorClassIdentifier: 
   cardName: Yahtzee
-  cardDescription: 
+  cardDescription: 'FOR DEMO PURPOSES ONLY - DOES NOT WORK YET
+
+'

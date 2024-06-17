@@ -42,11 +42,9 @@ public class Joker : Card
 
         foreach(Transform slot in _optionSlots)
         {
-            int index = CardsDealer.Instance.GetRandomCardIndex();
+            int index = CardsDealer.Instance.GetRandomCardIndex(CardsPool.POOL_JOKER);
 
-            Card card = CardsDealer.Instance.GetNewCardFromIndex(index, forceUseJokerPool: true);
-
-            card.transform.SetParent(slot);
+            Card card = CardsDealer.Instance.GetNewCardFromIndex(index, slot, CardsPool.POOL_JOKER);
 
             card.Active = true;
         }
@@ -62,7 +60,11 @@ public class Joker : Card
 
         if(!_choiceSlot.GetChild(0).TryGetComponent(out Card selectedCard)){ return; }
 
-        CardsManager.Instance.LocalGiveCardToPlayer(team, ref selectedCard);
+        Debug.Log("Card id" + CardId);
+        Debug.Log("Joker team " + _team);
+        CardsManager.Instance.LocalGiveCardToPlayer(Team, ref selectedCard);
+
+        // Destroy(selectedCard.gameObject);
 
         OverlayManager.Instance.ToggleOverlayOn(Overlay.Joker, isOn: false);
         DeckersGameManager.Instance.EndTurn();

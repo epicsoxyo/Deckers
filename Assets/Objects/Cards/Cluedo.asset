@@ -13,6 +13,10 @@ MonoBehaviour:
   m_Name: Cluedo
   m_EditorClassIdentifier: 
   cardName: Cluedo
-  cardDescription: On play, choose one opponent's piece to accuse for murder and
-    move it to a tile directly diagonal from one of your own pieces. If you guess
-    the killer correctly, capture that piece.
+  cardDescription: 'FOR DEMO PURPOSES ONLY - DOES NOT WORK YET
+
+
+    On play, choose
+    one opponent''s piece to accuse for murder and move it to a tile directly diagonal
+    from one of your own pieces. If you guess the killer correctly, capture that
+    piece.'

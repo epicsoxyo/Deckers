@@ -13,4 +13,8 @@ MonoBehaviour:
   m_Name: UnoReverse
   m_EditorClassIdentifier: 
   cardName: Uno Reverse
-  cardDescription: Reverse your opponent's last move.
+  cardDescription: 'FOR DEMO PURPOSES ONLY - DOES NOT WORK YET
+
+
+    Reverse your
+    opponent''s last move.'
